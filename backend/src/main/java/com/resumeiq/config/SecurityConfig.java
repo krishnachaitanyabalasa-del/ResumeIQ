@@ -39,18 +39,20 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .headers(headers -> headers.frameOptions(frame -> frame.disable())) // For H2 console
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints
+                        // Public endpoints — registration, user creation & login
                         .requestMatchers(
                                 "/",
                                 "/health",
                                 "/h2-console/**",
                                 "/api/auth/**",
+                                "/api/user",
+                                "/api/users",
+                                "/api/users/**",
                                 "/api/drives/open"
                         ).permitAll()
 
-                        // User, Applicant, and Admin routes
+                        // Drives & Resumes protected endpoints
                         .requestMatchers(
-                                "/api/users/**",
                                 "/api/drives/**",
                                 "/api/resumes/**"
                         ).hasAnyAuthority("APPLICANT", "ADMIN")
