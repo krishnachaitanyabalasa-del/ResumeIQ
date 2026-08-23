@@ -1,7 +1,9 @@
 package com.resumeiq.controller;
 
 import com.resumeiq.entity.Drive;
+import com.resumeiq.entity.ScreeningResult;
 import com.resumeiq.service.DriveService;
+import com.resumeiq.service.ScreeningService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,9 @@ public class DriveController {
 
     @Autowired
     private DriveService driveService;
+
+    @Autowired
+    private ScreeningService screeningService;
 
     @PostMapping
     public ResponseEntity<?> createDrive(@RequestBody Drive drive) {
@@ -56,10 +61,29 @@ public class DriveController {
 
     @PostMapping("/{driveId}/apply")
     public ResponseEntity<?> applyToDrive(@PathVariable Long driveId) {
-        // Placeholder for application submission
         return ResponseEntity.ok(Map.of(
                 "message", "Application submitted successfully for drive ID: " + driveId,
                 "driveId", driveId
         ));
+    }
+
+    @PostMapping("/{driveId}/screen")
+    public ResponseEntity<?> screenDrive(@PathVariable Long driveId) {
+        try {
+            List<ScreeningResult> results = screeningService.screenDrive(driveId);
+            return ResponseEntity.ok(results);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{driveId}/results")
+    public ResponseEntity<?> getScreeningResults(@PathVariable Long driveId) {
+        try {
+            List<ScreeningResult> results = screeningService.getResultsByDriveId(driveId);
+            return ResponseEntity.ok(results);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }
