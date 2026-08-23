@@ -28,10 +28,19 @@ public class Resume {
     @Column(columnDefinition = "TEXT")
     private String parsedText;
 
+    @Column(columnDefinition = "TEXT")
+    private String skills;
+
+    @Column(columnDefinition = "TEXT")
+    private String education;
+
+    @Column(columnDefinition = "TEXT")
+    private String experience;
+
     private LocalDateTime uploadedAt;
 
     @PrePersist
     protected void onCreate() {
-        this.uploadedAt = LocalDateTime.now();
+        uploadedAt = LocalDateTime.now();
     }
 }
