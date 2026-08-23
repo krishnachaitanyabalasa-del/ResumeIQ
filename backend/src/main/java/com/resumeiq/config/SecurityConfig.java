@@ -34,17 +34,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         return http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
-
-                .headers(headers ->
-                        headers.frameOptions(frame -> frame.disable())
-                )
-
+                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .authorizeHttpRequests(auth -> auth
-
+                        // Public endpoints
                         .requestMatchers(
                                 "/",
                                 "/health",
@@ -53,32 +48,26 @@ public class SecurityConfig {
                                 "/api/user",
                                 "/api/users",
                                 "/api/users/**",
+                                "/api/admin",
+                                "/api/admin/login",
                                 "/api/drives/open"
                         ).permitAll()
 
+                        // Drives & Resumes protected endpoints
                         .requestMatchers(
                                 "/api/drives/**",
                                 "/api/resumes/**"
                         ).hasAnyAuthority("APPLICANT", "ADMIN")
 
-                        .requestMatchers("/api/admin/**")
-                        .hasAuthority("ADMIN")
+                        // Admin-only routes
+                        .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
 
-                        .anyRequest()
-                        .authenticated()
+                        .anyRequest().authenticated()
                 )
-
+                .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS
-                        )
-                )
-
-                .addFilterBefore(
-                        jwtFilter,
-                        UsernamePasswordAuthenticationFilter.class
-                )
-
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
