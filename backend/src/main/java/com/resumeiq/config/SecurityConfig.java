@@ -48,8 +48,9 @@ public class SecurityConfig {
                                 "/api/drives/open"
                         ).permitAll()
 
-                        // Applicant and Admin routes
+                        // User, Applicant, and Admin routes
                         .requestMatchers(
+                                "/api/users/**",
                                 "/api/drives/**",
                                 "/api/resumes/**"
                         ).hasAnyAuthority("APPLICANT", "ADMIN")
