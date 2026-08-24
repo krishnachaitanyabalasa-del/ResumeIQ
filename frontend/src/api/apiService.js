@@ -25,10 +25,17 @@ export const authApi = {
 
   getMyDriveStats: () => axiosInstance.get("/drives/my-drives/stats"),
 
+  getDriveById: (driveId) => axiosInstance.get(`/drives/${driveId}`),
+
+  updateDrive: (driveId, driveData) => axiosInstance.put(`/drives/${driveId}`, driveData),
+
   createDrive: (formData) =>
     axiosInstance.post("/drives", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     }),
+
+  // Applications API
+  getApplicationsByDrive: (driveId) => axiosInstance.get(`/applications/drive/${driveId}`),
 };
 
 export default authApi;

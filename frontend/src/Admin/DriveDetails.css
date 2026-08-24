@@ -1,0 +1,346 @@
+.drive-details-page {
+  min-height: 100vh;
+  background-color: #F8FAFC;
+  color: #0F172A;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* BREADCRUMB ROW */
+.breadcrumb-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: #64748B;
+}
+
+.breadcrumb-link {
+  color: #475569;
+  font-weight: 600;
+}
+
+.breadcrumb-current {
+  color: #0F172A;
+  font-weight: 700;
+}
+
+/* DRIVE DETAILS CONTAINER */
+.details-content-container {
+  max-width: 1240px;
+  width: 100%;
+  margin: 28px auto 40px;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* TOP BANNER CARD */
+.banner-card {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 24px 32px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.banner-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.drive-details-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: #EEF2FF;
+  color: #4F46E5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 800;
+  border: 1px solid #C7D2FE;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.banner-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.banner-title-row h1 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.banner-meta {
+  font-size: 13px;
+  color: #64748B;
+  margin-top: 4px;
+}
+
+.status-dropdown-wrapper {
+  position: relative;
+}
+
+.status-dropdown-btn {
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.status-dropdown-menu {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  width: 180px;
+  z-index: 100;
+  padding: 6px;
+}
+
+.status-option-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.status-option-item:hover {
+  background: #F1F5F9;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dot-green { background: #16A34A; }
+.dot-red { background: #DC2626; }
+.dot-orange { background: #EA580C; }
+.dot-purple { background: #4F46E5; }
+
+/* 5 STAT BOXES STRIP */
+.stats-strip-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+.strip-box {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 18px 20px;
+  border: 1px solid #E2E8F0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.strip-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #EEF2FF;
+  color: #4F46E5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.strip-info label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748B;
+  display: block;
+}
+
+.strip-value {
+  font-size: 14px;
+  font-weight: 800;
+  color: #0F172A;
+  margin-top: 2px;
+}
+
+.strip-sub {
+  font-size: 11px;
+  color: #94A3B8;
+}
+
+/* 2-COLUMN MIDDLE GRID */
+.middle-details-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 24px;
+}
+
+.jd-box {
+  line-height: 1.6;
+  color: #334155;
+  font-size: 14px;
+}
+
+.jd-box h4 {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0F172A;
+  margin: 18px 0 8px;
+}
+
+.jd-box ul {
+  padding-left: 20px;
+  margin-top: 8px;
+}
+
+.jd-box li {
+  margin-bottom: 6px;
+}
+
+/* REQUIREMENTS TABLE BOX */
+.req-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.req-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #F1F5F9;
+  font-size: 13px;
+}
+
+.req-label {
+  font-weight: 700;
+  color: #475569;
+  width: 38%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.req-value {
+  font-weight: 600;
+  color: #0F172A;
+}
+
+/* APPLIED CANDIDATES SECTION */
+.candidates-card-section {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 28px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+}
+
+.candidates-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.export-excel-btn {
+  background: #10B981;
+  color: #FFFFFF;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+  transition: background 0.2s ease;
+}
+
+.export-excel-btn:hover {
+  background: #059669;
+}
+
+/* CANDIDATES TABLE STYLING */
+.candidate-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #EEF2FF;
+  color: #4F46E5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 11px;
+}
+
+.candidate-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+/* SCORE BADGES */
+.score-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 26px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.score-green { background: #DCFCE7; color: #15803D; }
+.score-orange { background: #FFEDD5; color: #C2410C; }
+.score-red { background: #FEE2E2; color: #B91C1C; }
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 1000px) {
+  .stats-strip-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .middle-details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .stats-strip-grid {
+    grid-template-columns: 1fr;
+  }
+}

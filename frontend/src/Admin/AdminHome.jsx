@@ -352,7 +352,7 @@ export default function AdminHome() {
                       </td>
 
                       <td>
-                        <button className="action-btn-view" onClick={() => alert(`Drive: ${drive.driveName}\nCompany: ${drive.companyName}\nRole: ${drive.role}\nLocation: ${drive.location}`)}>
+                        <button className="action-btn-view" onClick={() => navigate(`/admin/drives/${drive.id}`)}>
                           View Details
                         </button>
                         <button className="action-dots">

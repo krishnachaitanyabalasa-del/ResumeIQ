@@ -9,6 +9,7 @@ import RegisterAdmin from "./Admin/RegisterAdmin";
 import UserHomePage from "./User/UserHomePage";
 import AdminHome from "./Admin/AdminHome";
 import CreateDrive from "./Admin/CreateDrive";
+import DriveDetails from "./Admin/DriveDetails";
 import "./App.css";
 
 export default function App() {
@@ -28,6 +29,7 @@ export default function App() {
         {/* Recruiter / Admin Routes */}
         <Route path="/admin-home" element={<AdminHome />} />
         <Route path="/create-drive" element={<CreateDrive />} />
+        <Route path="/admin/drives/:driveId" element={<DriveDetails />} />
       </Routes>
     </Router>
   );
