@@ -91,7 +91,7 @@ export default function AdminHome() {
       }
     } catch (err) {
       console.error("Error fetching admin dashboard data:", err);
-      setErrorMsg("Failed to connect to backend server. Make sure Spring Boot backend is running on http://localhost:8080");
+      setErrorMsg("Failed to connect to backend server. Make sure Spring Boot backend is active on Render (https://resumeiq-backend-d7s5.onrender.com)");
     } finally {
       setLoading(false);
     }

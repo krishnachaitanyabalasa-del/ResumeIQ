@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { authApi } from "../api/apiService";
+import { BASE_SERVER_URL } from "../api/axiosInstance";
 import AdminNavbar from "../components/AdminNavbar";
 import "./DriveDetails.css";
 import {
@@ -467,7 +468,7 @@ export default function DriveDetails() {
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 {selectedCandidateApp.resume?.fileUrl && (
                   <a
-                    href={`http://localhost:8080${selectedCandidateApp.resume.fileUrl}`}
+                    href={`${BASE_SERVER_URL}${selectedCandidateApp.resume.fileUrl}`}
                     target="_blank"
                     rel="noreferrer"
                     style={{ padding: "8px 16px", background: "#EEF2FF", border: "1px solid #C7D2FE", color: "#4F46E5", borderRadius: "10px", fontWeight: "700", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px", textDecoration: "none" }}
