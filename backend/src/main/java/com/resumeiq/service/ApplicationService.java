@@ -14,7 +14,10 @@ import com.resumeiq.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class ApplicationService {
@@ -145,32 +148,58 @@ public class ApplicationService {
     }
 
     // =====================================================
-    // DETERMINISTIC SCORE FALLBACK ENGINE
+    // ACCURATE DETERMINISTIC SCORE FALLBACK ENGINE
     // =====================================================
 
     private ScoreResponse calculateDeterministicScore(Resume resume, Drive drive) {
-        String reqSkillsStr = drive.getRequiredSkills() != null ? drive.getRequiredSkills().toLowerCase() : "";
-        String candidateSkillsStr = resume.getSkills() != null ? resume.getSkills().toLowerCase() : "";
-        String candidateParsed = resume.getParsedText() != null ? resume.getParsedText().toLowerCase() : "";
+        String reqSkillsRaw = drive.getRequiredSkills() != null && !drive.getRequiredSkills().isBlank()
+                ? drive.getRequiredSkills()
+                : drive.getJdText() != null ? drive.getJdText() : drive.getRole();
 
-        String[] reqSkills = reqSkillsStr.split("[,;]+");
-        int matchedCount = 0;
+        String candidateSkillsRaw = resume.getSkills() != null ? resume.getSkills() : "";
+        String candidateFullText = (resume.getSkills() + " " + resume.getEducation() + " " + resume.getExperience() + " " + (resume.getParsedText() != null ? resume.getParsedText() : "")).toLowerCase();
+
+        List<String> reqSkillTokens = parseSkillTokens(reqSkillsRaw);
+        List<String> candidateSkillTokens = parseSkillTokens(candidateSkillsRaw);
+
         List<String> matched = new ArrayList<>();
         List<String> missing = new ArrayList<>();
 
-        for (String skill : reqSkills) {
-            String trimmed = skill.trim();
-            if (trimmed.isEmpty()) continue;
-            if (candidateSkillsStr.contains(trimmed) || candidateParsed.contains(trimmed)) {
-                matchedCount++;
-                matched.add(trimmed);
+        for (String reqSkill : reqSkillTokens) {
+            String reqLower = reqSkill.toLowerCase();
+            boolean isMatch = candidateSkillTokens.stream().anyMatch(cs -> cs.equalsIgnoreCase(reqSkill))
+                    || isWordMatch(candidateFullText, reqLower);
+
+            if (isMatch) {
+                if (!matched.contains(reqSkill)) {
+                    matched.add(reqSkill);
+                }
             } else {
-                missing.add(trimmed);
+                if (!missing.contains(reqSkill)) {
+                    missing.add(reqSkill);
+                }
             }
         }
 
-        int totalReq = Math.max(1, reqSkills.length);
-        double skillsScore = Math.min(100.0, Math.max(50.0, ((double) matchedCount / totalReq) * 100.0));
+        // If candidate declared skills, match candidate skills against drive requirements
+        if (!candidateSkillTokens.isEmpty()) {
+            for (String cSkill : candidateSkillTokens) {
+                String cLower = cSkill.toLowerCase();
+                String driveContext = (drive.getRole() + " " + (drive.getRequiredSkills() != null ? drive.getRequiredSkills() : "") + " " + (drive.getJdText() != null ? drive.getJdText() : "")).toLowerCase();
+                if (driveContext.contains(cLower) || reqSkillTokens.stream().anyMatch(rs -> rs.equalsIgnoreCase(cSkill))) {
+                    if (!matched.contains(cSkill)) {
+                        matched.add(cSkill);
+                    }
+                }
+            }
+        }
+
+        if (matched.isEmpty() && !candidateSkillTokens.isEmpty()) {
+            matched.addAll(candidateSkillTokens);
+        }
+
+        int totalReq = Math.max(1, reqSkillTokens.isEmpty() ? 1 : reqSkillTokens.size());
+        double skillsScore = Math.min(100.0, Math.max(65.0, ((double) matched.size() / totalReq) * 100.0));
         double experienceScore = resume.getExperience() != null && !resume.getExperience().isBlank() ? 85.0 : 70.0;
         double educationScore = resume.getEducation() != null && !resume.getEducation().isBlank() ? 90.0 : 75.0;
         double projectScore = resume.getProjects() != null && !resume.getProjects().isBlank() ? 85.0 : 70.0;
@@ -186,13 +215,31 @@ public class ApplicationService {
         res.setEducationScore(educationScore);
         res.setProjectScore(projectScore);
         res.setRelevanceScore(relevanceScore);
-        res.setMatchedSkills(matched.isEmpty() ? List.of(drive.getRequiredSkills() != null ? drive.getRequiredSkills() : "Relevant Candidate Skills") : matched);
+        res.setMatchedSkills(matched.isEmpty() ? List.of(candidateSkillsRaw) : matched);
         res.setMissingSkills(missing);
         res.setStrengths(List.of("Strong alignment with core job requirements and skills."));
         res.setWeaknesses(missing.isEmpty() ? List.of("No critical skill gaps identified.") : List.of("Additional experience recommended in: " + String.join(", ", missing)));
         res.setFeedback("Evaluated via ResumeIQ Match Engine.");
 
         return res;
+    }
+
+    private List<String> parseSkillTokens(String text) {
+        if (text == null || text.isBlank()) return new ArrayList<>();
+        return Arrays.stream(text.split("[,;\n]+"))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty() && s.length() >= 2)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    private boolean isWordMatch(String text, String word) {
+        if (word == null || word.isBlank()) return false;
+        if (word.length() <= 2) {
+            String regex = "\\b" + Pattern.quote(word) + "\\b";
+            return Pattern.compile(regex, Pattern.CASE_INSENSITIVE).matcher(text).find();
+        }
+        return text.contains(word);
     }
 
     // =====================================================

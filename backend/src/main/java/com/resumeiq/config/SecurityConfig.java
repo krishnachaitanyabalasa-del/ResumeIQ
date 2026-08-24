@@ -41,12 +41,13 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .authorizeHttpRequests(auth -> auth
                         // ==========================================
-                        // 1. PUBLIC ENDPOINTS (No Token Required)
+                        // 1. PUBLIC ENDPOINTS & STATIC FILES
                         // ==========================================
                         .requestMatchers(
                                 "/",
                                 "/health",
                                 "/h2-console/**",
+                                "/uploads/**",
                                 "/api/auth/**",
                                 "/api/admin/login",
                                 "/api/drives/open"
@@ -75,17 +76,14 @@ public class SecurityConfig {
                                 "/api/applications/drive/**"
                         ).hasAuthority("ADMIN")
 
-                        .requestMatchers(HttpMethod.POST, "/api/drives").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/drives/*").hasAuthority("ADMIN")
-
-                        // ==========================================
-                        // 4. DEFAULT: ALL OTHER REQUESTS REQUIRE AUTH
-                        // ==========================================
                         .anyRequest().authenticated()
                 )
-                .httpBasic(Customizer.withDefaults())
+
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+
+                .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
@@ -93,7 +91,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:5174", "http://localhost:3000"));
+        config.setAllowedOriginPatterns(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -111,8 +109,8 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
+        provider.setUserDetailsService(userDetailsService);
         return provider;
     }
 
