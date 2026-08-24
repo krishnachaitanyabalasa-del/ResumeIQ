@@ -43,77 +43,32 @@ export default function DriveDetails() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  // Fallback sample applications if DB has 0 applications yet
-  const sampleApplications = [
-    {
-      id: 1,
-      applicant: { name: "Rohit Sharma", email: "rohit.sharma@email.com", phone: "+91 98765 43210", experience: "0.8 Years" },
-      score: 85,
-      appliedAt: "24 May 2024, 09:15 AM"
-    },
-    {
-      id: 2,
-      applicant: { name: "Anjali Patel", email: "anjali.patel@email.com", phone: "+91 91234 56789", experience: "0.6 Years" },
-      score: 78,
-      appliedAt: "24 May 2024, 10:02 AM"
-    },
-    {
-      id: 3,
-      applicant: { name: "Vikram Kumar", email: "vikram.kumar@email.com", phone: "+91 99887 66554", experience: "1.2 Years" },
-      score: 72,
-      appliedAt: "24 May 2024, 11:20 AM"
-    },
-    {
-      id: 4,
-      applicant: { name: "Neha Iyer", email: "neha.iyer@email.com", phone: "+91 87654 32109", experience: "0.5 Years" },
-      score: 65,
-      appliedAt: "24 May 2024, 12:05 PM"
-    },
-    {
-      id: 5,
-      applicant: { name: "Aman Mishra", email: "aman.mishra@email.com", phone: "+91 76543 21098", experience: "0.3 Years" },
-      score: 45,
-      appliedAt: "24 May 2024, 01:30 PM"
-    }
-  ];
-
-  // Fetch Drive and Applications from Backend
+  // Fetch Drive Details and Applied Candidates from Backend APIs
   const fetchData = async () => {
     setLoading(true);
+    setErrorMessage("");
+
     try {
-      const [driveRes, appsRes] = await Promise.allSettled([
+      // Fetch drive info and candidates applied to this drive
+      const [driveRes, appsRes] = await Promise.all([
         authApi.getDriveById(driveId),
         authApi.getApplicationsByDrive(driveId)
       ]);
 
-      if (driveRes.status === "fulfilled" && driveRes.value.data) {
-        setDrive(driveRes.value.data);
-      } else {
-        // Mock fallback drive if not found
-        setDrive({
-          id: driveId,
-          driveName: "Freshers Hiring Drive",
-          companyName: "Infosys",
-          role: "Full Stack Developer",
-          location: "Bangalore, India",
-          experience: "0-2 years",
-          description: "We are looking for enthusiastic and motivated freshers to join our dynamic team as Full Stack Developers. You will work on building scalable web applications using modern technologies and collaborate with cross-functional teams.",
-          requiredSkills: "Java, Spring Boot, React, JavaScript, MySQL, Git",
-          status: "OPEN",
-          createdByEmail: "admin@gmail.com",
-          createdAt: "2024-05-24T09:00:00"
-        });
+      if (driveRes && driveRes.data) {
+        setDrive(driveRes.data);
       }
 
-      if (appsRes.status === "fulfilled" && Array.isArray(appsRes.value.data) && appsRes.value.data.length > 0) {
-        setApplications(appsRes.value.data);
+      if (appsRes && Array.isArray(appsRes.data)) {
+        setApplications(appsRes.data);
       } else {
-        setApplications(sampleApplications);
+        setApplications([]);
       }
     } catch (err) {
       console.error("Fetch Drive Details Error:", err);
-      setApplications(sampleApplications);
+      setErrorMessage("Failed to load drive details or applications from backend server.");
     } finally {
       setLoading(false);
     }
@@ -131,7 +86,7 @@ export default function DriveDetails() {
       setDrive({ ...drive, status: newStatus });
     } catch (err) {
       console.error("Status Update Error:", err);
-      setDrive({ ...drive, status: newStatus });
+      alert("Failed to update drive status.");
     }
   };
 
@@ -150,7 +105,7 @@ export default function DriveDetails() {
       `"${app.applicant?.phone || "N/A"}"`,
       `"${app.applicant?.experience || app.experience || "0-2 years"}"`,
       app.score || 0,
-      `"${app.appliedAt ? new Date(app.appliedAt).toLocaleString() : "24 May 2024"}"`
+      `"${app.appliedAt ? new Date(app.appliedAt).toLocaleString() : ""}"`
     ]);
 
     const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
@@ -163,22 +118,20 @@ export default function DriveDetails() {
     document.body.removeChild(link);
   };
 
-  // Filter & sort candidates by score descending
-  const filteredApps = applications
-    .filter((app) => {
-      const name = app.applicant?.name || "";
-      const email = app.applicant?.email || "";
-      const phone = app.applicant?.phone || "";
-      const query = searchQuery.toLowerCase();
-      return name.toLowerCase().includes(query) || email.toLowerCase().includes(query) || phone.includes(query);
-    })
-    .sort((a, b) => (b.score || 0) - (a.score || 0));
+  // Filter candidates by search query
+  const filteredApps = applications.filter((app) => {
+    const name = app.applicant?.name || "";
+    const email = app.applicant?.email || "";
+    const phone = app.applicant?.phone || "";
+    const query = searchQuery.toLowerCase();
+    return name.toLowerCase().includes(query) || email.toLowerCase().includes(query) || phone.includes(query);
+  });
 
   if (loading) {
     return (
       <div className="drive-details-page">
-        <div style={{ textAlign: "center", padding: "100px", color: "#64748B" }}>
-          Loading drive details...
+        <div style={{ textAlign: "center", padding: "100px", color: "#64748B", fontSize: "16px", fontWeight: "600" }}>
+          Loading drive details and candidates from backend...
         </div>
       </div>
     );
@@ -222,6 +175,12 @@ export default function DriveDetails() {
           <span>Drives</span> &gt; <span className="breadcrumb-current">Drive Details</span>
         </div>
 
+        {errorMessage && (
+          <div className="error-banner" style={{ background: "#FEE2E2", color: "#B91C1C", padding: "14px 20px", borderRadius: "12px" }}>
+            {errorMessage}
+          </div>
+        )}
+
         {/* TOP BANNER CARD */}
         <div className="banner-card">
           <div className="banner-left">
@@ -240,7 +199,7 @@ export default function DriveDetails() {
               </div>
               <div className="banner-meta">
                 Drive ID: JD-{drive?.id || driveId} • Created on{" "}
-                {drive?.createdAt ? new Date(drive.createdAt).toLocaleDateString() : "24 May 2024"} by{" "}
+                {drive?.createdAt ? new Date(drive.createdAt).toLocaleDateString() : "N/A"} by{" "}
                 {drive?.createdByEmail || "admin@gmail.com"}
               </div>
             </div>
@@ -284,7 +243,7 @@ export default function DriveDetails() {
             <div className="strip-icon"><FaBriefcase /></div>
             <div className="strip-info">
               <label>Role / Position</label>
-              <div className="strip-value">{drive?.role || "Developer"}</div>
+              <div className="strip-value">{drive?.role || "N/A"}</div>
               <span className="strip-sub">{drive?.experience || "0-2 years"}</span>
             </div>
           </div>
@@ -293,7 +252,7 @@ export default function DriveDetails() {
             <div className="strip-icon"><FaBuilding /></div>
             <div className="strip-info">
               <label>Company</label>
-              <div className="strip-value">{drive?.companyName || "Company"}</div>
+              <div className="strip-value">{drive?.companyName || "N/A"}</div>
             </div>
           </div>
 
@@ -301,8 +260,7 @@ export default function DriveDetails() {
             <div className="strip-icon"><FaMapMarkerAlt /></div>
             <div className="strip-info">
               <label>Location</label>
-              <div className="strip-value">{drive?.location || "India"}</div>
-              <span className="strip-sub">On-site</span>
+              <div className="strip-value">{drive?.location || "N/A"}</div>
             </div>
           </div>
 
@@ -331,15 +289,7 @@ export default function DriveDetails() {
               <div className="section-icon-badge"><FaFileAlt /></div>
               <h3>Job Description</h3>
             </div>
-            <p>{drive?.description || "We are looking for enthusiastic freshers to join our engineering team."}</p>
-
-            <h4>Responsibilities</h4>
-            <ul>
-              <li>Develop and maintain web applications using modern front-end and back-end technologies.</li>
-              <li>Collaborate with UI/UX designers and product managers to implement user-friendly interfaces.</li>
-              <li>Write clean, maintainable, and efficient code with proper unit test coverage.</li>
-              <li>Participate in peer code reviews and provide constructive technical feedback.</li>
-            </ul>
+            <p>{drive?.description || drive?.jdText || "No job description text provided."}</p>
           </div>
 
           {/* REQUIREMENTS TABLE BOX */}
@@ -353,27 +303,19 @@ export default function DriveDetails() {
               <tbody>
                 <tr>
                   <td className="req-label"><FaTools /> Required Skills</td>
-                  <td className="req-value">{drive?.requiredSkills || "Java, Spring Boot, React, MySQL, Git"}</td>
-                </tr>
-                <tr>
-                  <td className="req-label"><FaTools /> Preferred Skills</td>
-                  <td className="req-value">AWS, Docker, Kubernetes, CI/CD</td>
+                  <td className="req-value">{drive?.requiredSkills || "N/A"}</td>
                 </tr>
                 <tr>
                   <td className="req-label"><FaGraduationCap /> Education</td>
-                  <td className="req-value">Bachelor's Degree in Computer Science or related field</td>
+                  <td className="req-value">{drive?.requiredEducation || "Bachelor's Degree"}</td>
                 </tr>
                 <tr>
                   <td className="req-label"><FaBriefcase /> Experience</td>
-                  <td className="req-value">{drive?.experience || "0 - 2 years"}</td>
+                  <td className="req-value">{drive?.requiredExperience || drive?.experience || "0-2 years"}</td>
                 </tr>
                 <tr>
                   <td className="req-label"><FaClock /> Employment Type</td>
                   <td className="req-value">Full-time</td>
-                </tr>
-                <tr>
-                  <td className="req-label"><FaMapMarkerAlt /> Location Type</td>
-                  <td className="req-value">On-site</td>
                 </tr>
                 <tr>
                   <td className="req-label"><FaUserCheck /> Drive Status</td>
@@ -392,7 +334,7 @@ export default function DriveDetails() {
                 Applied Candidates ({filteredApps.length})
               </h2>
               <p style={{ fontSize: "13px", color: "#64748B", marginTop: "2px" }}>
-                List of candidates who have applied for this drive, sorted by AI resume score.
+                List of candidates who have applied for this drive from backend database.
               </p>
             </div>
 
@@ -433,14 +375,14 @@ export default function DriveDetails() {
                 {filteredApps.length === 0 ? (
                   <tr>
                     <td colSpan="7" style={{ textAlign: "center", padding: "32px", color: "#94A3B8" }}>
-                      No candidate applications found for this drive.
+                      No candidate applications found in database for this drive.
                     </td>
                   </tr>
                 ) : (
                   filteredApps.map((app, idx) => {
-                    const score = Math.round(app.score || 75);
+                    const score = Math.round(app.score || 0);
                     const scoreClass = score >= 75 ? "score-green" : score >= 60 ? "score-orange" : "score-red";
-                    const candidateName = app.applicant?.name || `Candidate ${idx + 1}`;
+                    const candidateName = app.applicant?.name || "Candidate";
                     const candidateInitials = getInitials(candidateName);
 
                     return (
@@ -454,11 +396,11 @@ export default function DriveDetails() {
                           </div>
                         </td>
 
-                        <td>{app.applicant?.email || "candidate@email.com"}</td>
+                        <td>{app.applicant?.email || "N/A"}</td>
 
-                        <td>{app.applicant?.phone || "+91 98765 43210"}</td>
+                        <td>{app.applicant?.phone || "N/A"}</td>
 
-                        <td>{app.applicant?.experience || "0.8 Years"}</td>
+                        <td>{app.applicant?.experience || app.experience || "0-2 years"}</td>
 
                         <td>
                           <span className={`score-badge ${scoreClass}`}>
@@ -467,7 +409,7 @@ export default function DriveDetails() {
                         </td>
 
                         <td style={{ fontSize: "12px", color: "#64748B" }}>
-                          {app.appliedAt ? new Date(app.appliedAt).toLocaleString() : "24 May 2024, 09:15 AM"}
+                          {app.appliedAt ? new Date(app.appliedAt).toLocaleString() : "N/A"}
                         </td>
                       </tr>
                     );
@@ -479,13 +421,11 @@ export default function DriveDetails() {
 
           {/* FOOTER PAGINATION */}
           <div className="table-footer">
-            <span>Showing 1 to {filteredApps.length} of {applications.length} candidates</span>
+            <span>Showing {filteredApps.length} of {applications.length} candidates</span>
 
             <div className="pagination-controls">
               <button className="page-btn"><FaChevronLeft /></button>
               <button className="page-btn active">1</button>
-              <button className="page-btn">2</button>
-              <button className="page-btn">3</button>
               <button className="page-btn"><FaChevronRight /></button>
             </div>
           </div>
