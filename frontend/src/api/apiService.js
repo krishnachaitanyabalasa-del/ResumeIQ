@@ -39,6 +39,8 @@ export const authApi = {
     }),
 
   // Applications API
+  getAllApplications: () => axiosInstance.get("/applications"),
+
   getApplicationsByDrive: (driveId) => axiosInstance.get(`/applications/drive/${driveId}`),
 
   getApplicationsByUser: (userId) => axiosInstance.get(`/applications/user/${userId}`),

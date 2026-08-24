@@ -40,6 +40,7 @@ export default function AdminHome() {
 
   // Dynamic Backend Data States
   const [drives, setDrives] = useState([]);
+  const [applicationsCountMap, setApplicationsCountMap] = useState({});
   const [stats, setStats] = useState({
     totalDrives: 0,
     openDrives: 0,
@@ -55,7 +56,7 @@ export default function AdminHome() {
   const [selectedStatus, setSelectedStatus] = useState("ALL");
   const [selectedLocation, setSelectedLocation] = useState("ALL");
 
-  // Fetch drives and stats from Spring Boot Backend
+  // Fetch drives, applications, and stats from Spring Boot Backend
   const fetchDashboardData = async () => {
     setLoading(true);
     setErrorMsg("");
@@ -66,18 +67,30 @@ export default function AdminHome() {
         return;
       }
 
-      // Parallel backend requests for My Drives and My Stats
-      const [drivesRes, statsRes] = await Promise.all([
+      // Parallel backend requests for My Drives, Stats, and Applications
+      const [drivesRes, statsRes, appsRes] = await Promise.allSettled([
         authApi.getMyDrives(),
-        authApi.getMyDriveStats()
+        authApi.getMyDriveStats(),
+        authApi.getAllApplications()
       ]);
 
-      if (drivesRes && Array.isArray(drivesRes.data)) {
-        setDrives(drivesRes.data);
+      if (drivesRes.status === "fulfilled" && drivesRes.value && Array.isArray(drivesRes.value.data)) {
+        setDrives(drivesRes.value.data);
       }
 
-      if (statsRes && statsRes.data) {
-        setStats(statsRes.data);
+      if (statsRes.status === "fulfilled" && statsRes.value && statsRes.value.data) {
+        setStats(statsRes.value.data);
+      }
+
+      if (appsRes.status === "fulfilled" && appsRes.value && Array.isArray(appsRes.value.data)) {
+        const counts = {};
+        appsRes.value.data.forEach((app) => {
+          const dId = app.drive?.id || app.driveId;
+          if (dId) {
+            counts[dId] = (counts[dId] || 0) + 1;
+          }
+        });
+        setApplicationsCountMap(counts);
       }
     } catch (err) {
       console.error("Error fetching admin dashboard data:", err);
@@ -155,84 +168,84 @@ export default function AdminHome() {
         </div>
       </nav>
 
-      {/* MAIN CONTENT */}
+      {/* DASHBOARD CONTAINER */}
       <main className="dashboard-content">
-        {/* WELCOME BANNER */}
+        {/* WELCOME BANNER HEADER */}
         <div className="welcome-banner">
-          <div className="welcome-avatar">{adminInitials}</div>
+          <div className="welcome-avatar-large">{adminInitials}</div>
           <div className="welcome-text">
             <h1>Welcome back, {adminName}</h1>
-            <p>Manage and monitor your hiring drives. {adminEmail && `(${adminEmail})`}</p>
+            <p>Manage and monitor your hiring drives. ({adminEmail || "admin@gmail.com"})</p>
           </div>
         </div>
 
         {errorMsg && (
-          <div className="error-banner" style={{ marginBottom: "24px" }}>
+          <div className="error-banner" style={{ background: "#FEE2E2", color: "#B91C1C", padding: "14px 20px", borderRadius: "12px", marginBottom: "20px" }}>
             {errorMsg}
           </div>
         )}
 
-        {/* 4 STATS METRICS GRID */}
-        <div className="stats-grid">
+        {/* 4 STATS CARDS ROW */}
+        <div className="stats-cards-grid">
           <div className="stat-card">
-            <div className="stat-icon-wrapper stat-icon-purple">
+            <div className="stat-icon-wrapper icon-blue">
               <FaBriefcase />
             </div>
-            <div className="stat-info">
-              <label>Total Drives</label>
+            <div className="stat-content">
+              <span className="stat-label">Total Drives</span>
               <div className="stat-value">{totalDrivesCount}</div>
               <span className="stat-subtitle">All time</span>
             </div>
           </div>
 
           <div className="stat-card">
-            <div className="stat-icon-wrapper stat-icon-green">
+            <div className="stat-icon-wrapper icon-green">
               <FaPlay />
             </div>
-            <div className="stat-info">
-              <label>Active Drives</label>
+            <div className="stat-content">
+              <span className="stat-label">Active Drives</span>
               <div className="stat-value">{activeDrivesCount}</div>
               <span className="stat-subtitle">Currently active</span>
             </div>
           </div>
 
           <div className="stat-card">
-            <div className="stat-icon-wrapper stat-icon-orange">
+            <div className="stat-icon-wrapper icon-orange">
               <FaClock />
             </div>
-            <div className="stat-info">
-              <label>Closed / Upcoming</label>
+            <div className="stat-content">
+              <span className="stat-label">Closed / Upcoming</span>
               <div className="stat-value">{closedUpcomingCount}</div>
               <span className="stat-subtitle">Starting / Closed</span>
             </div>
           </div>
 
           <div className="stat-card">
-            <div className="stat-icon-wrapper stat-icon-pink">
+            <div className="stat-icon-wrapper icon-purple">
               <FaCheckCircle />
             </div>
-            <div className="stat-info">
-              <label>Completed Drives</label>
+            <div className="stat-content">
+              <span className="stat-label">Completed Drives</span>
               <div className="stat-value">{completedDrivesCount}</div>
               <span className="stat-subtitle">Completed</span>
             </div>
           </div>
         </div>
 
-        {/* YOUR DRIVES SECTION */}
-        <div className="drives-container-card">
-          <div className="drives-header">
-            <div className="drives-title-area">
+        {/* YOUR DRIVES SECTION CARD */}
+        <div className="drives-section-card">
+          <div className="drives-section-header">
+            <div>
               <h2>Your Drives</h2>
               <p>View and manage all hiring drives created by you.</p>
             </div>
 
-            <button className="create-drive-btn" onClick={() => navigate("/create-drive")}>
+            <button className="create-drive-primary-btn" onClick={() => navigate("/create-drive")}>
               <FaPlus /> Create New Drive
             </button>
           </div>
 
-          {/* CONTROLS BAR */}
+          {/* CONTROLS BAR: SEARCH & DROPDOWN FILTERS */}
           <div className="controls-bar">
             <div className="search-box">
               <FaSearch className="search-icon" />
@@ -245,55 +258,57 @@ export default function AdminHome() {
               />
             </div>
 
-            <select
-              className="filter-select"
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-            >
-              <option value="ALL">All Status</option>
-              <option value="OPEN">Open / Active</option>
-              <option value="UPCOMING">Upcoming</option>
-              <option value="CLOSED">Closed</option>
-              <option value="COMPLETED">Completed</option>
-            </select>
+            <div className="filter-dropdowns">
+              <select
+                className="filter-select"
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+              >
+                <option value="ALL">All Status</option>
+                <option value="OPEN">Open</option>
+                <option value="UPCOMING">Upcoming</option>
+                <option value="CLOSED">Closed</option>
+                <option value="COMPLETED">Completed</option>
+              </select>
 
-            <select
-              className="filter-select"
-              value={selectedLocation}
-              onChange={(e) => setSelectedLocation(e.target.value)}
-            >
-              <option value="ALL">All Locations</option>
-              <option value="bangalore">Bangalore</option>
-              <option value="hyderabad">Hyderabad</option>
-              <option value="pune">Pune</option>
-              <option value="chennai">Chennai</option>
-            </select>
+              <select
+                className="filter-select"
+                value={selectedLocation}
+                onChange={(e) => setSelectedLocation(e.target.value)}
+              >
+                <option value="ALL">All Locations</option>
+                <option value="bangalore">Bangalore</option>
+                <option value="hyderabad">Hyderabad</option>
+                <option value="amaravati">Amaravati</option>
+                <option value="pune">Pune</option>
+              </select>
 
-            <select className="filter-select">
-              <option>Sort by: Newest</option>
-              <option>Sort by: Oldest</option>
-            </select>
+              <select className="filter-select">
+                <option value="NEWEST">Sort by: Newest</option>
+                <option value="OLDEST">Sort by: Oldest</option>
+              </select>
+            </div>
           </div>
 
-          {/* DATA TABLE */}
+          {/* DRIVES DATA TABLE */}
           <div className="table-responsive">
             <table className="drives-table">
               <thead>
                 <tr>
-                  <th>Drive Name</th>
-                  <th>Role / Position</th>
-                  <th>Location</th>
-                  <th>Candidates</th>
-                  <th>Status</th>
-                  <th>Created On</th>
-                  <th>Actions</th>
+                  <th>DRIVE NAME</th>
+                  <th>ROLE / POSITION</th>
+                  <th>LOCATION</th>
+                  <th>CANDIDATES</th>
+                  <th>STATUS</th>
+                  <th>CREATED ON</th>
+                  <th>ACTIONS</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   <tr>
                     <td colSpan="7" style={{ textAlign: "center", padding: "32px", color: "#64748B" }}>
-                      Loading hiring drives from backend...
+                      Loading hiring drives from database...
                     </td>
                   </tr>
                 ) : filteredDrives.length === 0 ? (
@@ -307,6 +322,8 @@ export default function AdminHome() {
                     const companyFirstLetter = (drive.companyName || drive.driveName || "C")
                       .charAt(0)
                       .toUpperCase();
+
+                    const appliedCount = applicationsCountMap[drive.id] || drive.applicationsCount || 0;
 
                     return (
                       <tr key={drive.id}>
@@ -344,8 +361,9 @@ export default function AdminHome() {
                           </div>
                         </td>
 
+                        {/* LIVE CANDIDATES APPLIED COUNT */}
                         <td>
-                          <div className="candidates-count">{drive.applicationsCount || drive.candidatesCount || 0}</div>
+                          <div className="candidates-count">{appliedCount}</div>
                           <span className="candidates-label">Applied</span>
                         </td>
 
@@ -392,7 +410,7 @@ export default function AdminHome() {
             </table>
           </div>
 
-          {/* TABLE FOOTER & PAGINATION */}
+          {/* FOOTER PAGINATION */}
           <div className="table-footer">
             <span>Showing {filteredDrives.length} of {drives.length} drives</span>
 
