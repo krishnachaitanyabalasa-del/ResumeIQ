@@ -144,7 +144,7 @@
   border-radius: 50%;
 }
 
-/* HERO GRAPHIC ILLUSTRATION (MATCHING MOCKUP) */
+/* HERO GRAPHIC ILLUSTRATION */
 .hero-right {
   flex: 1;
   display: flex;
@@ -399,12 +399,9 @@
   box-shadow: 0 20px 40px rgba(79, 70, 229, 0.12);
 }
 
-.portal-card-user {
-  border-top: 4px solid #4F46E5;
-}
-
+.portal-card-user,
 .portal-card-admin {
-  border-top: 4px solid #EA580C;
+  border-top: 4px solid #4F46E5;
 }
 
 .card-badge-icon {
@@ -418,14 +415,10 @@
   margin-bottom: 16px;
 }
 
-.card-badge-user {
+.card-badge-user,
+.card-badge-admin {
   background: #EEF2FF;
   color: #4F46E5;
-}
-
-.card-badge-admin {
-  background: #FFF7ED;
-  color: #EA580C;
 }
 
 .portal-card h3 {
@@ -451,8 +444,10 @@
   font-size: 48px;
 }
 
-.portal-illustration-user { color: #818CF8; }
-.portal-illustration-admin { color: #F97316; }
+.portal-illustration-user,
+.portal-illustration-admin { 
+  color: #6366F1; 
+}
 
 .continue-btn {
   width: 100%;
@@ -469,24 +464,16 @@
   transition: all 0.2s ease;
 }
 
-.continue-btn-user {
+.continue-btn-user,
+.continue-btn-admin {
   background: #4F46E5;
   color: #FFFFFF;
   box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
 }
 
-.continue-btn-user:hover {
-  background: #4338CA;
-}
-
-.continue-btn-admin {
-  background: #EA580C;
-  color: #FFFFFF;
-  box-shadow: 0 4px 14px rgba(234, 88, 12, 0.3);
-}
-
+.continue-btn-user:hover,
 .continue-btn-admin:hover {
-  background: #C2410C;
+  background: #4338CA;
 }
 
 /* BOTTOM HIGHLIGHTS BAR */

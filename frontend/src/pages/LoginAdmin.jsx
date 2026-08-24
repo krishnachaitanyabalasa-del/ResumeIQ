@@ -80,9 +80,9 @@ export default function LoginAdmin() {
   return (
     <div className="login-container">
       {/* LEFT SIDE PANEL */}
-      <div className="login-left" style={{ background: "linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 50%, #FED7AA 100%)" }}>
+      <div className="login-left">
         <div className="brand-header" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
-          <div className="brand-icon" style={{ background: "linear-gradient(135deg, #EA580C 0%, #C2410C 100%)" }}>
+          <div className="brand-icon">
             <FaFileAlt />
           </div>
           <div className="brand-text">
@@ -94,7 +94,7 @@ export default function LoginAdmin() {
         <div className="left-content">
           <h1 className="hero-headline">
             Recruiter & HR
-            <span className="highlight" style={{ color: "#EA580C" }}>Admin Portal</span>
+            <span className="highlight">Admin Portal</span>
           </h1>
 
           <p className="hero-subtext">
@@ -103,7 +103,7 @@ export default function LoginAdmin() {
 
           <div className="features-list">
             <div className="feature-item">
-              <div className="feature-icon" style={{ background: "#FFEDD5", color: "#EA580C" }}>
+              <div className="feature-icon">
                 <FaBuilding />
               </div>
               <div className="feature-details">
@@ -113,7 +113,7 @@ export default function LoginAdmin() {
             </div>
 
             <div className="feature-item">
-              <div className="feature-icon" style={{ background: "#FFEDD5", color: "#EA580C" }}>
+              <div className="feature-icon">
                 <FaUserCheck />
               </div>
               <div className="feature-details">
@@ -123,7 +123,7 @@ export default function LoginAdmin() {
             </div>
 
             <div className="feature-item">
-              <div className="feature-icon" style={{ background: "#FFEDD5", color: "#EA580C" }}>
+              <div className="feature-icon">
                 <FaShieldAlt />
               </div>
               <div className="feature-details">
@@ -140,9 +140,9 @@ export default function LoginAdmin() {
               <div className="mockup-line"></div>
             </div>
 
-            <div className="match-badge" style={{ background: "#FFF7ED", borderColor: "#FDBA74" }}>
-              <div className="match-score" style={{ color: "#EA580C" }}>HR Admin</div>
-              <div className="match-label" style={{ color: "#C2410C" }}>Recruiter Control</div>
+            <div className="match-badge">
+              <div className="match-score">HR Admin</div>
+              <div className="match-label">Recruiter Control</div>
             </div>
           </div>
         </div>
@@ -159,13 +159,13 @@ export default function LoginAdmin() {
             <FaArrowLeft /> Home
           </button>
           <span className="top-bar-text">New admin?</span>
-          <button className="create-account-btn" style={{ borderColor: "#EA580C", color: "#EA580C" }} onClick={() => navigate("/register-admin")}>
+          <button className="create-account-btn" onClick={() => navigate("/register-admin")}>
             <FaUserPlus /> Create Admin
           </button>
         </div>
 
         <div className="login-card">
-          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#FFF7ED", color: "#EA580C", padding: "4px 12px", borderRadius: "12px", fontSize: "12px", fontWeight: "700", marginBottom: "16px" }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#EEF2FF", color: "#4F46E5", padding: "4px 12px", borderRadius: "12px", fontSize: "12px", fontWeight: "700", marginBottom: "16px" }}>
             <FaShieldAlt /> Recruiter Admin Portal
           </div>
 
@@ -222,18 +222,18 @@ export default function LoginAdmin() {
                 Remember me
               </label>
 
-              <a href="#" className="forgot-link" style={{ color: "#EA580C" }} onClick={(e) => e.preventDefault()}>
+              <a href="#" className="forgot-link" onClick={(e) => e.preventDefault()}>
                 Forgot password?
               </a>
             </div>
 
-            <button type="submit" className="submit-btn" style={{ background: "#EA580C", boxShadow: "0 4px 12px rgba(234, 88, 12, 0.25)" }} disabled={loading}>
+            <button type="submit" className="submit-btn" disabled={loading}>
               {loading ? "Logging in..." : <>Continue as Admin <FaArrowRight /></>}
             </button>
           </form>
 
           <div className="privacy-banner">
-            <div className="privacy-icon" style={{ background: "#FFF7ED", color: "#EA580C" }}>
+            <div className="privacy-icon">
               <FaShieldAlt />
             </div>
             <div className="privacy-text">
