@@ -31,7 +31,7 @@ EXPOSE 8080
 ENV SERVER_PORT=8080
 ENV SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/ResumeIQ?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
 ENV SPRING_DATASOURCE_USERNAME=root
-ENV SPRING_DATASOURCE_PASSWORD=root
+ENV SPRING_DATASOURCE_PASSWORD=A1@CHAITu143
 
 # Launch Spring Boot Application
 ENTRYPOINT ["java", "-jar", "app.jar"]
