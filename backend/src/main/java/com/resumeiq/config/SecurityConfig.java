@@ -52,6 +52,8 @@ public class SecurityConfig {
                                 "/api/drives/open"
                         ).permitAll()
 
+                        .requestMatchers(HttpMethod.POST, "/api/admin").permitAll()
+
                         // ==========================================
                         // 2. APPLICANT & SHARED ENDPOINTS
                         // ==========================================

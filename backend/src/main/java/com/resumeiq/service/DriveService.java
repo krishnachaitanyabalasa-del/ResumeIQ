@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 @Service
 public class DriveService {
@@ -65,7 +65,8 @@ public class DriveService {
             String experience,
             String description,
             String jdText,
-            MultipartFile jdFile
+            MultipartFile jdFile,
+            String adminEmail
     ) throws Exception {
 
         System.out.println(
@@ -81,12 +82,20 @@ public class DriveService {
                         !jdFile.isEmpty();
 
         System.out.println(
+                "Admin Email: " + adminEmail
+        );
+
+        System.out.println(
                 "Has JD text: " + hasText
         );
 
         System.out.println(
                 "Has JD file: " + hasFile
         );
+
+        // --------------------------------------------------------
+        // VALIDATE JD
+        // --------------------------------------------------------
 
         if (!hasText && !hasFile) {
 
@@ -105,7 +114,7 @@ public class DriveService {
         String finalJdText = jdText;
 
         // --------------------------------------------------------
-        // PDF
+        // PDF EXTRACTION
         // --------------------------------------------------------
 
         if (hasFile) {
@@ -128,7 +137,7 @@ public class DriveService {
         }
 
         // --------------------------------------------------------
-        // LOCAL PARSING
+        // LOCAL JD PARSING
         // --------------------------------------------------------
 
         System.out.println(
@@ -160,7 +169,7 @@ public class DriveService {
         );
 
         // --------------------------------------------------------
-        // SAVE DRIVE
+        // BUILD DRIVE
         // --------------------------------------------------------
 
         Drive drive =
@@ -211,7 +220,14 @@ public class DriveService {
 
                         .status("OPEN")
 
+                        // ⭐ IMPORTANT
+                        .createdByEmail(adminEmail)
+
                         .build();
+
+        // --------------------------------------------------------
+        // SAVE DRIVE
+        // --------------------------------------------------------
 
         System.out.println(
                 "5. Saving Drive..."
@@ -227,6 +243,72 @@ public class DriveService {
 
         return saved;
     }
+
+    // ============================================================
+    // GET DRIVES CREATED BY ADMIN
+    // ============================================================
+
+    public List<Drive> getDrivesByAdminEmail(
+            String email
+    ) {
+
+        return driveRepository
+                .findByCreatedByEmail(email);
+    }
+
+    // ============================================================
+    // GET ADMIN TOTAL DRIVE COUNT
+    // ============================================================
+
+    public long getDriveCountByAdminEmail(
+            String email
+    ) {
+
+        return driveRepository
+                .countByCreatedByEmail(email);
+    }
+
+    // ============================================================
+    // GET ADMIN DASHBOARD STATISTICS
+    // ============================================================
+
+    public Map<String, Long> getAdminDriveStats(
+            String email
+    ) {
+
+        long total =
+                driveRepository
+                        .countByCreatedByEmail(email);
+
+        long open =
+                driveRepository
+                        .countByCreatedByEmailAndStatus(
+                                email,
+                                "OPEN"
+                        );
+
+        long closed =
+                driveRepository
+                        .countByCreatedByEmailAndStatus(
+                                email,
+                                "CLOSED"
+                        );
+
+        long completed =
+                driveRepository
+                        .countByCreatedByEmailAndStatus(
+                                email,
+                                "COMPLETED"
+                        );
+
+        return Map.of(
+                "totalDrives", total,
+                "openDrives", open,
+                "closedDrives", closed,
+                "completedDrives", completed
+        );
+    }
+
     // ============================================================
     // PDF TEXT EXTRACTION
     // ============================================================
@@ -235,16 +317,165 @@ public class DriveService {
             MultipartFile file
     ) throws IOException {
 
-        try (PDDocument document =
-                     PDDocument.load(
-                             file.getInputStream()
-                     )) {
+        try (
+                PDDocument document =
+                        PDDocument.load(
+                                file.getInputStream()
+                        )
+        ) {
 
             PDFTextStripper stripper =
                     new PDFTextStripper();
 
             return stripper.getText(document);
         }
+    }
+
+    // ============================================================
+    // GET ALL DRIVES
+    // ============================================================
+
+    public List<Drive> getAllDrives() {
+
+        return driveRepository.findAll();
+    }
+
+    // ============================================================
+    // GET OPEN DRIVES
+    // ============================================================
+
+    public List<Drive> getOpenDrives() {
+
+        return driveRepository.findByStatus(
+                "OPEN"
+        );
+    }
+
+    // ============================================================
+    // GET DRIVE BY ID
+    // ============================================================
+
+    public java.util.Optional<Drive> getDriveById(
+            Long id
+    ) {
+
+        return driveRepository.findById(id);
+    }
+
+    // ============================================================
+    // UPDATE DRIVE
+    // ============================================================
+
+    public Drive updateDrive(
+            Long id,
+            Drive driveDetails
+    ) {
+
+        Drive existingDrive =
+                driveRepository.findById(id)
+                        .orElseThrow(
+                                () -> new RuntimeException(
+                                        "Drive not found with id: "
+                                                + id
+                                )
+                        );
+
+        if (driveDetails.getCompanyName() != null) {
+            existingDrive.setCompanyName(
+                    driveDetails.getCompanyName()
+            );
+        }
+
+        if (driveDetails.getCompanyLogo() != null) {
+            existingDrive.setCompanyLogo(
+                    driveDetails.getCompanyLogo()
+            );
+        }
+
+        if (driveDetails.getDriveName() != null) {
+            existingDrive.setDriveName(
+                    driveDetails.getDriveName()
+            );
+        }
+
+        if (driveDetails.getRole() != null) {
+            existingDrive.setRole(
+                    driveDetails.getRole()
+            );
+        }
+
+        if (driveDetails.getLocation() != null) {
+            existingDrive.setLocation(
+                    driveDetails.getLocation()
+            );
+        }
+
+        if (driveDetails.getExperience() != null) {
+            existingDrive.setExperience(
+                    driveDetails.getExperience()
+            );
+        }
+
+        if (driveDetails.getDescription() != null) {
+            existingDrive.setDescription(
+                    driveDetails.getDescription()
+            );
+        }
+
+        if (driveDetails.getJdText() != null) {
+            existingDrive.setJdText(
+                    driveDetails.getJdText()
+            );
+        }
+
+        if (driveDetails.getJdFileUrl() != null) {
+            existingDrive.setJdFileUrl(
+                    driveDetails.getJdFileUrl()
+            );
+        }
+
+        if (driveDetails.getRequiredSkills() != null) {
+            existingDrive.setRequiredSkills(
+                    driveDetails.getRequiredSkills()
+            );
+        }
+
+        if (driveDetails.getRequiredExperience() != null) {
+            existingDrive.setRequiredExperience(
+                    driveDetails.getRequiredExperience()
+            );
+        }
+
+        if (driveDetails.getRequiredEducation() != null) {
+            existingDrive.setRequiredEducation(
+                    driveDetails.getRequiredEducation()
+            );
+        }
+
+        if (driveDetails.getRequiredResponsibilities() != null) {
+            existingDrive.setRequiredResponsibilities(
+                    driveDetails.getRequiredResponsibilities()
+            );
+        }
+
+        if (driveDetails.getRequiredQualifications() != null) {
+            existingDrive.setRequiredQualifications(
+                    driveDetails.getRequiredQualifications()
+            );
+        }
+
+        if (driveDetails.getStatus() != null) {
+            existingDrive.setStatus(
+                    driveDetails.getStatus()
+            );
+        }
+
+        // ❌ DO NOT update createdByEmail here.
+        // The owner of a drive should never change.
+
+        return driveRepository.save(
+                existingDrive
+        );
     }
 
     // ============================================================
@@ -282,35 +513,9 @@ public class DriveService {
                   "requiredQualifications": ""
                 }
 
-                EXTRACTION RULES:
-
-                requiredSkills:
-                Extract all technical and soft skills
-                required or preferred.
-
-                requiredExperience:
-                Extract required years of experience,
-                internship requirements, or experience level.
-
-                requiredEducation:
-                Extract degree, branch, university,
-                academic and educational requirements.
-
-                requiredResponsibilities:
-                Extract the major responsibilities
-                mentioned in the JD.
-
-                requiredQualifications:
-                Extract qualifications, eligibility requirements,
-                certifications, and other requirements.
-
                 JOB DESCRIPTION:
 
                 """ + jdText;
-
-        // --------------------------------------------------------
-        // GEMINI CONFIGURATION
-        // --------------------------------------------------------
 
         GenerateContentConfig config =
                 GenerateContentConfig.builder()
@@ -319,14 +524,6 @@ public class DriveService {
                         .responseMimeType("application/json")
                         .build();
 
-        System.out.println(
-                "Calling Gemini API..."
-        );
-
-        // --------------------------------------------------------
-        // GEMINI REQUEST
-        // --------------------------------------------------------
-
         GenerateContentResponse response =
                 geminiClient.models.generateContent(
                         "gemini-3.7-flash",
@@ -334,13 +531,12 @@ public class DriveService {
                         config
                 );
 
-        System.out.println(
-                "Gemini API call completed."
-        );
+        String result =
+                response.text();
 
-        String result = response.text();
+        if (result == null ||
+                result.isBlank()) {
 
-        if (result == null || result.isBlank()) {
             throw new RuntimeException(
                     "Gemini returned an empty response"
             );
@@ -368,19 +564,13 @@ public class DriveService {
         String json =
                 response.trim();
 
-        // Remove ```json
         if (json.startsWith("```json")) {
-
             json = json.substring(7);
         }
-
-        // Remove ```
         else if (json.startsWith("```")) {
-
             json = json.substring(3);
         }
 
-        // Remove ending ```
         if (json.endsWith("```")) {
 
             json = json.substring(
@@ -390,10 +580,6 @@ public class DriveService {
         }
 
         json = json.trim();
-
-        // --------------------------------------------------------
-        // Find JSON object
-        // --------------------------------------------------------
 
         int firstBrace =
                 json.indexOf('{');
@@ -436,168 +622,12 @@ public class DriveService {
         return "application/pdf"
                 .equalsIgnoreCase(contentType)
 
-                || (fileName != null
-                && fileName
-                .toLowerCase()
-                .endsWith(".pdf"));
-    }
-
-    // ============================================================
-    // GET ALL DRIVES
-    // ============================================================
-
-    public List<Drive> getAllDrives() {
-
-        return driveRepository.findAll();
-    }
-
-    // ============================================================
-    // GET OPEN DRIVES
-    // ============================================================
-
-    public List<Drive> getOpenDrives() {
-
-        return driveRepository.findByStatus(
-                "OPEN"
-        );
-    }
-
-    // ============================================================
-    // GET DRIVE BY ID
-    // ============================================================
-
-    public Optional<Drive> getDriveById(
-            Long id
-    ) {
-
-        return driveRepository.findById(id);
-    }
-
-    // ============================================================
-    // UPDATE DRIVE
-    // ============================================================
-
-    public Drive updateDrive(
-            Long id,
-            Drive driveDetails
-    ) {
-
-        Drive existingDrive =
-                driveRepository.findById(id)
-                        .orElseThrow(
-                                () -> new RuntimeException(
-                                        "Drive not found with id: "
-                                                + id
-                                )
-                        );
-
-        if (driveDetails.getCompanyName() != null) {
-
-            existingDrive.setCompanyName(
-                    driveDetails.getCompanyName()
-            );
-        }
-
-        if (driveDetails.getCompanyLogo() != null) {
-
-            existingDrive.setCompanyLogo(
-                    driveDetails.getCompanyLogo()
-            );
-        }
-
-        if (driveDetails.getDriveName() != null) {
-
-            existingDrive.setDriveName(
-                    driveDetails.getDriveName()
-            );
-        }
-
-        if (driveDetails.getRole() != null) {
-
-            existingDrive.setRole(
-                    driveDetails.getRole()
-            );
-        }
-
-        if (driveDetails.getLocation() != null) {
-
-            existingDrive.setLocation(
-                    driveDetails.getLocation()
-            );
-        }
-
-        if (driveDetails.getExperience() != null) {
-
-            existingDrive.setExperience(
-                    driveDetails.getExperience()
-            );
-        }
-
-        if (driveDetails.getDescription() != null) {
-
-            existingDrive.setDescription(
-                    driveDetails.getDescription()
-            );
-        }
-
-        if (driveDetails.getJdText() != null) {
-
-            existingDrive.setJdText(
-                    driveDetails.getJdText()
-            );
-        }
-
-        if (driveDetails.getJdFileUrl() != null) {
-
-            existingDrive.setJdFileUrl(
-                    driveDetails.getJdFileUrl()
-            );
-        }
-
-        if (driveDetails.getRequiredSkills() != null) {
-
-            existingDrive.setRequiredSkills(
-                    driveDetails.getRequiredSkills()
-            );
-        }
-
-        if (driveDetails.getRequiredExperience() != null) {
-
-            existingDrive.setRequiredExperience(
-                    driveDetails.getRequiredExperience()
-            );
-        }
-
-        if (driveDetails.getRequiredEducation() != null) {
-
-            existingDrive.setRequiredEducation(
-                    driveDetails.getRequiredEducation()
-            );
-        }
-
-        if (driveDetails.getRequiredResponsibilities() != null) {
-
-            existingDrive.setRequiredResponsibilities(
-                    driveDetails.getRequiredResponsibilities()
-            );
-        }
-
-        if (driveDetails.getRequiredQualifications() != null) {
-
-            existingDrive.setRequiredQualifications(
-                    driveDetails.getRequiredQualifications()
-            );
-        }
-
-        if (driveDetails.getStatus() != null) {
-
-            existingDrive.setStatus(
-                    driveDetails.getStatus()
-            );
-        }
-
-        return driveRepository.save(
-                existingDrive
+                || (
+                fileName != null
+                        &&
+                        fileName
+                                .toLowerCase()
+                                .endsWith(".pdf")
         );
     }
 }

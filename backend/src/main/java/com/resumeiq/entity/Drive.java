@@ -66,6 +66,8 @@ public class Drive {
 
     private String status;
 
+    private String createdByEmail;
+
     private LocalDateTime createdAt;
 
     @PrePersist

@@ -8,6 +8,7 @@ import com.resumeiq.service.ScreeningService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,10 +25,10 @@ public class DriveController {
     @Autowired
     private ScreeningService screeningService;
 
+
     // ============================================================
     // CREATE DRIVE
     // ============================================================
-
 
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<?> createDrive(
@@ -53,23 +54,39 @@ public class DriveController {
             String jdText,
 
             @RequestParam(required = false)
-            MultipartFile jdFile
+            MultipartFile jdFile,
 
+            Authentication authentication
     ) {
 
         try {
 
+            // Get logged-in admin email from JWT
+            String adminEmail =
+                    authentication.getName();
+
             Drive createdDrive =
                     driveService.createDrive(
+
                             companyName,
+
                             companyLogo,
+
                             driveName,
+
                             role,
+
                             location,
+
                             experience,
+
                             description,
+
                             jdText,
-                            jdFile
+
+                            jdFile,
+
+                            adminEmail
                     );
 
             return ResponseEntity
@@ -80,12 +97,82 @@ public class DriveController {
 
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of(
-                            "error",
-                            e.getMessage()
-                    ));
+                    .body(
+                            Map.of(
+                                    "error",
+                                    e.getMessage()
+                            )
+                    );
         }
     }
+
+
+    // ============================================================
+    // GET MY DRIVES
+    // ============================================================
+
+    @GetMapping("/my-drives")
+    public ResponseEntity<List<Drive>> getMyDrives(
+            Authentication authentication
+    ) {
+
+        String adminEmail =
+                authentication.getName();
+
+        return ResponseEntity.ok(
+                driveService
+                        .getDrivesByAdminEmail(
+                                adminEmail
+                        )
+        );
+    }
+
+
+    // ============================================================
+    // GET MY DRIVE STATISTICS
+    // ============================================================
+
+    @GetMapping("/my-drives/stats")
+    public ResponseEntity<?> getMyDriveStats(
+            Authentication authentication
+    ) {
+
+        String adminEmail =
+                authentication.getName();
+
+        return ResponseEntity.ok(
+                driveService
+                        .getAdminDriveStats(
+                                adminEmail
+                        )
+        );
+    }
+
+
+    // ============================================================
+    // GET DRIVE COUNT
+    // ============================================================
+
+    @GetMapping("/my-drives/count")
+    public ResponseEntity<?> getMyDriveCount(
+            Authentication authentication
+    ) {
+
+        String adminEmail =
+                authentication.getName();
+
+        return ResponseEntity.ok(
+                Map.of(
+                        "count",
+                        driveService
+                                .getDriveCountByAdminEmail(
+                                        adminEmail
+                                )
+                )
+        );
+    }
+
+
     // ============================================================
     // GET ALL DRIVES
     // ============================================================
@@ -98,6 +185,7 @@ public class DriveController {
         );
     }
 
+
     // ============================================================
     // GET OPEN DRIVES
     // ============================================================
@@ -109,6 +197,7 @@ public class DriveController {
                 driveService.getOpenDrives()
         );
     }
+
 
     // ============================================================
     // GET DRIVE BY ID
@@ -124,10 +213,13 @@ public class DriveController {
                 .map(ResponseEntity::ok)
                 .orElse(
                         ResponseEntity
-                                .status(HttpStatus.NOT_FOUND)
+                                .status(
+                                        HttpStatus.NOT_FOUND
+                                )
                                 .build()
                 );
     }
+
 
     // ============================================================
     // UPDATE DRIVE
@@ -135,7 +227,9 @@ public class DriveController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateDrive(
+
             @PathVariable Long id,
+
             @RequestBody Drive drive
     ) {
 
@@ -154,7 +248,9 @@ public class DriveController {
         } catch (Exception e) {
 
             return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
+                    .status(
+                            HttpStatus.NOT_FOUND
+                    )
                     .body(
                             Map.of(
                                     "error",
@@ -164,17 +260,20 @@ public class DriveController {
         }
     }
 
+
     // ============================================================
     // APPLY TO DRIVE
     // ============================================================
 
     @PostMapping("/{driveId}/apply")
     public ResponseEntity<?> applyToDrive(
+
             @PathVariable Long driveId
     ) {
 
         return ResponseEntity.ok(
                 Map.of(
+
                         "message",
                         "Application submitted successfully for drive ID: "
                                 + driveId,
@@ -185,12 +284,14 @@ public class DriveController {
         );
     }
 
+
     // ============================================================
     // SCREEN DRIVE
     // ============================================================
 
     @PostMapping("/{driveId}/screen")
     public ResponseEntity<?> screenDrive(
+
             @PathVariable Long driveId
     ) {
 
@@ -208,7 +309,9 @@ public class DriveController {
         } catch (Exception e) {
 
             return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
+                    .status(
+                            HttpStatus.BAD_REQUEST
+                    )
                     .body(
                             Map.of(
                                     "error",
@@ -218,12 +321,14 @@ public class DriveController {
         }
     }
 
+
     // ============================================================
     // GET SCREENING RESULTS
     // ============================================================
 
     @GetMapping("/{driveId}/results")
     public ResponseEntity<?> getScreeningResults(
+
             @PathVariable Long driveId
     ) {
 
@@ -242,7 +347,9 @@ public class DriveController {
         } catch (Exception e) {
 
             return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
+                    .status(
+                            HttpStatus.NOT_FOUND
+                    )
                     .body(
                             Map.of(
                                     "error",
