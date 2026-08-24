@@ -10,29 +10,25 @@ import {
   FaBriefcase,
   FaCloudUploadAlt,
   FaFilePdf,
-  FaFileText,
   FaInfoCircle,
-  FaCog,
-  FaCheck
+  FaCheck,
+  FaBuilding
 } from "react-icons/fa";
 
 export default function CreateDrive() {
   const navigate = useNavigate();
 
-  // Form State
+  // Form State without pre-filled defaults
   const [form, setForm] = useState({
     driveName: "",
-    companyName: "TCS",
+    companyName: "",
     role: "",
-    location: "Bangalore, India",
-    experience: "0-2 years",
+    location: "",
+    experience: "",
     driveFolder: "",
     description: "",
     jdType: "pdf", // 'pdf' or 'text'
-    jdText: "",
-    minScore: 60,
-    autoShortlist: true,
-    shortlistLimit: 20
+    jdText: ""
   });
 
   // Files
@@ -69,8 +65,16 @@ export default function CreateDrive() {
       setErrorMessage("Drive Name is required.");
       return;
     }
+    if (!form.companyName.trim()) {
+      setErrorMessage("Company / Organization Name is required.");
+      return;
+    }
     if (!form.role.trim()) {
       setErrorMessage("Role / Position is required.");
+      return;
+    }
+    if (!form.location.trim()) {
+      setErrorMessage("Location is required.");
       return;
     }
 
@@ -192,12 +196,13 @@ export default function CreateDrive() {
                 {logoPreviewUrl ? (
                   <img src={logoPreviewUrl} alt="Logo Preview" className="logo-preview-img" />
                 ) : (
-                  <div style={{ textAlign: "center", color: "#4F46E5", fontWeight: "800", fontSize: "14px" }}>
-                    TATA
+                  <div style={{ textAlign: "center", color: "#CBD5E1" }}>
+                    <FaBuilding style={{ fontSize: "24px" }} />
+                    <div style={{ fontSize: "10px", color: "#94A3B8", marginTop: "2px" }}>No Logo</div>
                   </div>
                 )}
                 <span className="change-logo-link" onClick={() => document.getElementById("logo-input").click()}>
-                  Change Logo
+                  {logoPreviewUrl ? "Change Logo" : "Upload Logo"}
                 </span>
               </div>
             </div>
@@ -243,6 +248,32 @@ export default function CreateDrive() {
               </div>
             </div>
 
+            {/* LOCATION & EXPERIENCE 2-COL */}
+            <div className="input-row-2col">
+              <div className="form-group-field">
+                <label>Location *</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="e.g., Bangalore, India"
+                  value={form.location}
+                  onChange={(e) => setForm({ ...form, location: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="form-group-field">
+                <label>Experience Required (Optional)</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="e.g., 0-2 years"
+                  value={form.experience}
+                  onChange={(e) => setForm({ ...form, experience: e.target.value })}
+                />
+              </div>
+            </div>
+
             {/* DRIVE FOLDER */}
             <div className="form-group-field">
               <label>Drive Folder (Optional)</label>
@@ -277,7 +308,7 @@ export default function CreateDrive() {
           <div className="section-card">
             <div className="section-header">
               <div className="section-icon-badge">
-                <FaFileText />
+                <FaFileAlt />
               </div>
               <div>
                 <h3>2. Job Description</h3>
@@ -304,7 +335,7 @@ export default function CreateDrive() {
                 className={`jd-tab-btn ${form.jdType === "text" ? "active" : ""}`}
                 onClick={() => setForm({ ...form, jdType: "text" })}
               >
-                <FaFileText /> Enter JD as Text
+                <FaFileAlt /> Enter JD as Text
               </button>
             </div>
 
@@ -349,62 +380,6 @@ export default function CreateDrive() {
             <div className="tip-alert-box">
               <FaInfoCircle style={{ fontSize: "16px", flexShrink: 0 }} />
               <span>Tip: A well-defined job description improves matching accuracy.</span>
-            </div>
-          </div>
-        </div>
-
-        {/* SECTION 3: SETTINGS */}
-        <div className="section-card">
-          <div className="section-header">
-            <div className="section-icon-badge">
-              <FaCog />
-            </div>
-            <div>
-              <h3>3. Settings</h3>
-            </div>
-          </div>
-
-          <div className="settings-grid">
-            <div className="form-group-field" style={{ marginBottom: 0 }}>
-              <label>Minimum Match Score (%) <FaInfoCircle style={{ color: "#94A3B8", fontSize: "12px" }} /></label>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <input
-                  type="number"
-                  className="form-input"
-                  value={form.minScore}
-                  onChange={(e) => setForm({ ...form, minScore: e.target.value })}
-                  min="0"
-                  max="100"
-                />
-                <span style={{ fontWeight: "700", color: "#64748B" }}>%</span>
-              </div>
-              <div className="field-hint">Candidates scoring below this will be marked as Rejected.</div>
-            </div>
-
-            <div className="form-group-field" style={{ marginBottom: 0 }}>
-              <label>Auto Shortlist <FaInfoCircle style={{ color: "#94A3B8", fontSize: "12px" }} /></label>
-              <div className="toggle-switch-container">
-                <label className="switch-label">
-                  <input
-                    type="checkbox"
-                    checked={form.autoShortlist}
-                    onChange={(e) => setForm({ ...form, autoShortlist: e.target.checked })}
-                  />
-                  <span className="slider"></span>
-                </label>
-              </div>
-              <div className="field-hint">Automatically shortlist candidates above minimum score.</div>
-            </div>
-
-            <div className="form-group-field" style={{ marginBottom: 0 }}>
-              <label>Shortlist Limit (Optional) <FaInfoCircle style={{ color: "#94A3B8", fontSize: "12px" }} /></label>
-              <input
-                type="number"
-                className="form-input"
-                value={form.shortlistLimit}
-                onChange={(e) => setForm({ ...form, shortlistLimit: e.target.value })}
-              />
-              <div className="field-hint">Maximum number of candidates to shortlist.</div>
             </div>
           </div>
         </div>
