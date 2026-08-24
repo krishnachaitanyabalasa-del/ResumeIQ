@@ -1,0 +1,17 @@
+.register-admin-container {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%);
+  padding: 40px 20px;
+}
+
+.register-admin-card {
+  width: 100%;
+  max-width: 480px;
+  background-color: #FFFFFF;
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+}
