@@ -3,7 +3,7 @@ package com.resumeiq.controller;
 import com.resumeiq.entity.Drive;
 import com.resumeiq.entity.ScreeningResult;
 import com.resumeiq.service.DriveService;
-import com.resumeiq.service.ScreeningService;
+import com.resumeiq.service.ScreeningResultService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,14 +17,14 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/drives")
+@CrossOrigin
 public class DriveController {
 
     @Autowired
     private DriveService driveService;
 
     @Autowired
-    private ScreeningService screeningService;
-
+    private ScreeningResultService screeningResultService;
 
     // ============================================================
     // CREATE DRIVE
@@ -49,6 +49,12 @@ public class DriveController {
 
             @RequestParam(required = false)
             String experience,
+
+            @RequestParam(required = false)
+            String lastDate,
+
+            @RequestParam(required = false)
+            String employmentType,
 
             @RequestParam(required = false)
             String description,
@@ -85,6 +91,10 @@ public class DriveController {
 
                             experience,
 
+                            lastDate,
+
+                            employmentType,
+
                             description,
 
                             jdText,
@@ -111,9 +121,8 @@ public class DriveController {
         }
     }
 
-
     // ============================================================
-    // GET MY DRIVES
+    // GET DRIVES CREATED BY LOGGED-IN ADMIN
     // ============================================================
 
     @GetMapping("/my-drives")
@@ -132,13 +141,12 @@ public class DriveController {
         );
     }
 
-
     // ============================================================
-    // GET MY DRIVE STATISTICS
+    // GET ADMIN DASHBOARD STATS
     // ============================================================
 
     @GetMapping("/my-drives/stats")
-    public ResponseEntity<?> getMyDriveStats(
+    public ResponseEntity<Map<String, Long>> getMyDriveStats(
             Authentication authentication
     ) {
 
@@ -267,100 +275,19 @@ public class DriveController {
 
 
     // ============================================================
-    // APPLY TO DRIVE
+    // GET SCREENING RESULTS FOR DRIVE
     // ============================================================
 
-    @PostMapping("/{driveId}/apply")
-    public ResponseEntity<?> applyToDrive(
-
+    @GetMapping("/{driveId}/results")
+    public ResponseEntity<List<ScreeningResult>> getResultsForDrive(
             @PathVariable Long driveId
     ) {
 
         return ResponseEntity.ok(
-                Map.of(
-
-                        "message",
-                        "Application submitted successfully for drive ID: "
-                                + driveId,
-
-                        "driveId",
-                        driveId
-                )
+                screeningResultService
+                        .getResultsForDrive(
+                                driveId
+                        )
         );
-    }
-
-
-    // ============================================================
-    // SCREEN DRIVE
-    // ============================================================
-
-    @PostMapping("/{driveId}/screen")
-    public ResponseEntity<?> screenDrive(
-
-            @PathVariable Long driveId
-    ) {
-
-        try {
-
-            List<ScreeningResult> results =
-                    screeningService.screenDrive(
-                            driveId
-                    );
-
-            return ResponseEntity.ok(
-                    results
-            );
-
-        } catch (Exception e) {
-
-            return ResponseEntity
-                    .status(
-                            HttpStatus.BAD_REQUEST
-                    )
-                    .body(
-                            Map.of(
-                                    "error",
-                                    e.getMessage()
-                            )
-                    );
-        }
-    }
-
-
-    // ============================================================
-    // GET SCREENING RESULTS
-    // ============================================================
-
-    @GetMapping("/{driveId}/results")
-    public ResponseEntity<?> getScreeningResults(
-
-            @PathVariable Long driveId
-    ) {
-
-        try {
-
-            List<ScreeningResult> results =
-                    screeningService
-                            .getResultsByDriveId(
-                                    driveId
-                            );
-
-            return ResponseEntity.ok(
-                    results
-            );
-
-        } catch (Exception e) {
-
-            return ResponseEntity
-                    .status(
-                            HttpStatus.NOT_FOUND
-                    )
-                    .body(
-                            Map.of(
-                                    "error",
-                                    e.getMessage()
-                            )
-                    );
-        }
     }
 }

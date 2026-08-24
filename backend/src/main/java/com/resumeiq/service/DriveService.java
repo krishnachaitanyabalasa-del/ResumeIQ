@@ -80,6 +80,8 @@ public class DriveService {
             String role,
             String location,
             String experience,
+            String lastDate,
+            String employmentType,
             String description,
             String jdText,
             MultipartFile jdFile,
@@ -208,6 +210,10 @@ public class DriveService {
                         .location(location)
 
                         .experience(experience)
+
+                        .lastDate(lastDate)
+
+                        .employmentType(employmentType != null && !employmentType.isBlank() ? employmentType : "Full-time")
 
                         .description(description)
 
@@ -444,6 +450,18 @@ public class DriveService {
         if (driveDetails.getExperience() != null) {
             existingDrive.setExperience(
                     driveDetails.getExperience()
+            );
+        }
+
+        if (driveDetails.getLastDate() != null) {
+            existingDrive.setLastDate(
+                    driveDetails.getLastDate()
+            );
+        }
+
+        if (driveDetails.getEmploymentType() != null) {
+            existingDrive.setEmploymentType(
+                    driveDetails.getEmploymentType()
             );
         }
 

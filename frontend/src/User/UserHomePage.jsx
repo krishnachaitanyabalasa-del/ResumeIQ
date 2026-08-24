@@ -345,10 +345,10 @@ export default function UserHomePage() {
                           </div>
                         </td>
 
-                        {/* ROLE / POSITION */}
+                        {/* ROLE / POSITION & EMPLOYMENT TYPE */}
                         <td>
                           <div className="role-title">{drive.role}</div>
-                          <div className="role-type">Full-time</div>
+                          <div className="role-type">{drive.employmentType || "Full-time"}</div>
                         </td>
 
                         {/* LOCATION */}

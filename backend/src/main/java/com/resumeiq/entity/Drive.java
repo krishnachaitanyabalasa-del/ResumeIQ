@@ -31,6 +31,10 @@ public class Drive {
 
     private String experience;
 
+    private String lastDate;
+
+    private String employmentType;
+
     @Column(columnDefinition = "TEXT")
     private String description;
 
@@ -77,6 +81,10 @@ public class Drive {
 
         if (this.status == null || this.status.isBlank()) {
             this.status = "OPEN";
+        }
+
+        if (this.employmentType == null || this.employmentType.isBlank()) {
+            this.employmentType = "Full-time";
         }
     }
 }
