@@ -14,8 +14,8 @@ import {
   FaStar,
   FaRobot,
   FaChartLine,
-  FaCheckCircle,
-  FaFileAlt
+  FaFileAlt,
+  FaArrowLeft
 } from "react-icons/fa";
 
 export default function LoginUser() {
@@ -95,12 +95,12 @@ export default function LoginUser() {
 
         <div className="left-content">
           <h1 className="hero-headline">
-            Smarter Screening.
-            <span className="highlight">Better Hiring.</span>
+            Job Seeker
+            <span className="highlight">Candidate Portal</span>
           </h1>
 
           <p className="hero-subtext">
-            AI-powered resume screening and candidate matching to connect the right talent with the right opportunities.
+            Upload your resume, match with top hiring drives, and track your application status in real-time.
           </p>
 
           <div className="features-list">
@@ -109,8 +109,8 @@ export default function LoginUser() {
                 <FaRobot />
               </div>
               <div className="feature-details">
-                <h4>AI Candidate Matching</h4>
-                <p>We match the right candidates to the jobs that fit your requirements.</p>
+                <h4>AI Resume Scoring</h4>
+                <p>Get instant AI feedback and score match highlights for jobs.</p>
               </div>
             </div>
 
@@ -119,8 +119,8 @@ export default function LoginUser() {
                 <FaChartLine />
               </div>
               <div className="feature-details">
-                <h4>Intelligent Screening</h4>
-                <p>Advanced AI analyzes resumes and ranks candidates instantly.</p>
+                <h4>Application Tracking</h4>
+                <p>Monitor your progress across multiple recruiter hiring drives.</p>
               </div>
             </div>
 
@@ -129,8 +129,8 @@ export default function LoginUser() {
                 <FaShieldAlt />
               </div>
               <div className="feature-details">
-                <h4>Secure & Reliable</h4>
-                <p>Your data is protected with enterprise-grade security.</p>
+                <h4>Verified Privacy</h4>
+                <p>Your resume data is safe and shared only with applied companies.</p>
               </div>
             </div>
           </div>
@@ -156,25 +156,26 @@ export default function LoginUser() {
       {/* RIGHT SIDE PANEL */}
       <div className="login-right">
         <div className="top-bar">
-          <span className="top-bar-text">New here?</span>
+          <button
+            className="create-account-btn"
+            style={{ border: "1px solid #CBD5E1", color: "#64748B", marginRight: "auto" }}
+            onClick={() => navigate("/")}
+          >
+            <FaArrowLeft /> Home
+          </button>
+          <span className="top-bar-text">New candidate?</span>
           <button className="create-account-btn" onClick={() => navigate("/register-user")}>
             <FaUserPlus /> Create Account
           </button>
         </div>
 
         <div className="login-card">
-          <h1 className="card-title">Welcome Back</h1>
-          <p className="card-subtitle">Login to access your dashboard</p>
-
-          {/* TOGGLE TABS */}
-          <div className="role-toggle">
-            <button className="toggle-tab active">
-              <FaUser /> User Login
-            </button>
-            <button className="toggle-tab" onClick={() => navigate("/login-admin")}>
-              <FaShieldAlt /> Admin Login
-            </button>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#EEF2FF", color: "#4F46E5", padding: "4px 12px", borderRadius: "12px", fontSize: "12px", fontWeight: "700", marginBottom: "16px" }}>
+            <FaUser /> User Candidate Portal
           </div>
+
+          <h1 className="card-title">Welcome Back</h1>
+          <p className="card-subtitle">Login to access your candidate dashboard</p>
 
           {showError && <div className="error-banner">{errorMessage}</div>}
 
@@ -232,7 +233,7 @@ export default function LoginUser() {
             </div>
 
             <button type="submit" className="submit-btn" disabled={loading}>
-              {loading ? "Logging in..." : <>Login <FaArrowRight /></>}
+              {loading ? "Logging in..." : <>Continue as User <FaArrowRight /></>}
             </button>
           </form>
 

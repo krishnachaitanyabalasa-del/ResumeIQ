@@ -1,31 +1,178 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { FaFileAlt, FaUser, FaShieldAlt, FaArrowRight } from "react-icons/fa";
-import "./Login.css";
+import "./Home.css";
+import {
+  FaFileAlt,
+  FaInfoCircle,
+  FaUser,
+  FaShieldAlt,
+  FaArrowRight,
+  FaStar,
+  FaBriefcase,
+  FaChartPie,
+  FaLock,
+  FaBolt,
+  FaBullseye,
+  FaBell,
+  FaCheck
+} from "react-icons/fa";
 
 export default function Home() {
   const navigate = useNavigate();
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg, #F5F3FF 0%, #EFF6FF 100%)", padding: "20px" }}>
-      <div style={{ textAlign: "center", maxWidth: "600px" }}>
-        <div style={{ width: "60px", height: "60px", background: "linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)", borderRadius: "16px", display: "flex", alignItems: "center", justifyContent: "center", color: "#FFF", fontSize: "28px", margin: "0 auto 16px" }}>
-          <FaFileAlt />
+    <div className="landing-page">
+      {/* NAVBAR */}
+      <nav className="landing-nav">
+        <div className="landing-brand" onClick={() => navigate("/")}>
+          <div className="landing-brand-icon">
+            <FaFileAlt />
+          </div>
+          <div className="landing-brand-text">
+            <h2>ResumeIQ</h2>
+            <p>Find Best Opportunities. Apply. Get Matched.</p>
+          </div>
         </div>
-        <h1 style={{ fontSize: "36px", fontWeight: "800", color: "#0F172A", letterSpacing: "-1px" }}>ResumeIQ</h1>
-        <p style={{ fontSize: "16px", color: "#64748B", marginTop: "8px", lineHeight: "1.5" }}>
-          AI-Powered Resume Screening & Candidate Matching Platform. Connect talent with opportunities effortlessly.
-        </p>
 
-        <div style={{ display: "flex", gap: "16px", justifyContent: "center", marginTop: "32px" }}>
-          <button className="submit-btn" style={{ width: "auto", padding: "14px 28px" }} onClick={() => navigate("/login-user")}>
-            <FaUser /> User Portal <FaArrowRight />
-          </button>
-          <button className="submit-btn" style={{ width: "auto", padding: "14px 28px", backgroundColor: "#1E1B4B" }} onClick={() => navigate("/login-admin")}>
-            <FaShieldAlt /> Admin Portal <FaArrowRight />
-          </button>
+        <button className="about-btn" onClick={() => alert("ResumeIQ is an AI-powered resume screening and candidate ranking platform.")}>
+          <FaInfoCircle /> About Us
+        </button>
+      </nav>
+
+      {/* HERO SECTION */}
+      <section className="hero-section">
+        <div className="hero-left">
+          <div className="pill-badge">
+            ✨ AI-Powered Hiring Platform
+          </div>
+
+          <h1 className="hero-title">
+            Smarter Screening.
+            <span className="highlight">Better Hiring.</span>
+          </h1>
+
+          <p className="hero-description">
+            ResumeIQ uses AI to screen resumes, match the right talent, and connect great people with great opportunities.
+          </p>
         </div>
-      </div>
+
+        <div className="hero-right">
+          <div className="graphic-card">
+            <div className="graphic-header">
+              <div className="graphic-dots">
+                <div className="graphic-dot"></div>
+                <div className="graphic-dot"></div>
+                <div className="graphic-dot"></div>
+              </div>
+              <div className="graphic-score-badge">92% Match</div>
+            </div>
+
+            <div className="graphic-body">
+              <div className="candidate-avatar">
+                <FaUser />
+              </div>
+              <div className="candidate-info">
+                <div className="info-line long"></div>
+                <div className="info-line medium"></div>
+                <div className="info-line short"></div>
+
+                <div className="graphic-stars">
+                  <FaStar /><FaStar /><FaStar /><FaStar /><FaStar />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* PORTAL SELECTION CARDS */}
+      <section className="selection-section">
+        <div className="selection-divider">
+          <span>✦</span> Choose how you want to continue <span>✦</span>
+        </div>
+
+        <div className="cards-grid">
+          {/* USER CARD */}
+          <div className="portal-card portal-card-user">
+            <div className="card-badge-icon card-badge-user">
+              <FaUser />
+            </div>
+            <h3>User Login</h3>
+            <p>Search jobs, apply to opportunities, and track your applications.</p>
+
+            <div className="portal-illustration portal-illustration-user">
+              <FaBriefcase />
+            </div>
+
+            <button
+              className="continue-btn continue-btn-user"
+              onClick={() => navigate("/login-user")}
+            >
+              Continue as User <FaArrowRight />
+            </button>
+          </div>
+
+          {/* ADMIN CARD */}
+          <div className="portal-card portal-card-admin">
+            <div className="card-badge-icon card-badge-admin">
+              <FaShieldAlt />
+            </div>
+            <h3>Admin Login</h3>
+            <p>Manage drives, screen candidates, and monitor hiring activity.</p>
+
+            <div className="portal-illustration portal-illustration-admin">
+              <FaChartPie />
+            </div>
+
+            <button
+              className="continue-btn continue-btn-admin"
+              onClick={() => navigate("/login-admin")}
+            >
+              Continue as Admin <FaArrowRight />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* BOTTOM HIGHLIGHTS BAR */}
+      <section className="highlights-bar">
+        <div className="highlight-item">
+          <div className="highlight-icon highlight-icon-1">
+            <FaLock />
+          </div>
+          <h5>Secure & Private</h5>
+          <p>Your data is safe with enterprise-grade security.</p>
+        </div>
+
+        <div className="highlight-item">
+          <div className="highlight-icon highlight-icon-2">
+            <FaBolt />
+          </div>
+          <h5>AI-Powered</h5>
+          <p>Intelligent screening for better matches.</p>
+        </div>
+
+        <div className="highlight-item">
+          <div className="highlight-icon highlight-icon-3">
+            <FaBullseye />
+          </div>
+          <h5>Precision Matching</h5>
+          <p>Right talent for the right opportunities.</p>
+        </div>
+
+        <div className="highlight-item">
+          <div className="highlight-icon highlight-icon-4">
+            <FaBell />
+          </div>
+          <h5>Real-time Updates</h5>
+          <p>Get notified about applications instantly.</p>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="landing-footer">
+        <FaCheck style={{ color: "#16A34A" }} /> Trusted by recruiters and job seekers worldwide
+      </footer>
     </div>
   );
 }

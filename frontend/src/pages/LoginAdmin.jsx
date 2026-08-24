@@ -7,14 +7,14 @@ import {
   FaLock,
   FaEye,
   FaEyeSlash,
-  FaUser,
   FaShieldAlt,
   FaUserPlus,
   FaArrowRight,
-  FaStar,
-  FaRobot,
-  FaChartLine,
-  FaFileAlt
+  FaChartPie,
+  FaBuilding,
+  FaUsersCheck,
+  FaFileAlt,
+  FaArrowLeft
 } from "react-icons/fa";
 
 export default function LoginAdmin() {
@@ -81,9 +81,9 @@ export default function LoginAdmin() {
   return (
     <div className="login-container">
       {/* LEFT SIDE PANEL */}
-      <div className="login-left">
+      <div className="login-left" style={{ background: "linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 50%, #FED7AA 100%)" }}>
         <div className="brand-header" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
-          <div className="brand-icon">
+          <div className="brand-icon" style={{ background: "linear-gradient(135deg, #EA580C 0%, #C2410C 100%)" }}>
             <FaFileAlt />
           </div>
           <div className="brand-text">
@@ -94,42 +94,42 @@ export default function LoginAdmin() {
 
         <div className="left-content">
           <h1 className="hero-headline">
-            Smarter Screening.
-            <span className="highlight">Better Hiring.</span>
+            Recruiter & HR
+            <span className="highlight" style={{ color: "#EA580C" }}>Admin Portal</span>
           </h1>
 
           <p className="hero-subtext">
-            AI-powered resume screening and candidate matching to connect the right talent with the right opportunities.
+            Create hiring drives, parse candidate resumes with Gemini AI, and auto-rank top talent instantly.
           </p>
 
           <div className="features-list">
             <div className="feature-item">
-              <div className="feature-icon">
-                <FaRobot />
+              <div className="feature-icon" style={{ background: "#FFEDD5", color: "#EA580C" }}>
+                <FaBuilding />
               </div>
               <div className="feature-details">
-                <h4>AI Candidate Matching</h4>
-                <p>We match the right candidates to the jobs that fit your requirements.</p>
+                <h4>Hiring Drives Management</h4>
+                <p>Create open drives with specific Job Description requirements.</p>
               </div>
             </div>
 
             <div className="feature-item">
-              <div className="feature-icon">
-                <FaChartLine />
+              <div className="feature-icon" style={{ background: "#FFEDD5", color: "#EA580C" }}>
+                <FaUsersCheck />
               </div>
               <div className="feature-details">
-                <h4>Intelligent Screening</h4>
-                <p>Advanced AI analyzes resumes and ranks candidates instantly.</p>
+                <h4>AI Candidate Ranking</h4>
+                <p>Gemini AI evaluates applicants and generates structured candidate scores.</p>
               </div>
             </div>
 
             <div className="feature-item">
-              <div className="feature-icon">
+              <div className="feature-icon" style={{ background: "#FFEDD5", color: "#EA580C" }}>
                 <FaShieldAlt />
               </div>
               <div className="feature-details">
-                <h4>Secure & Reliable</h4>
-                <p>Your data is protected with enterprise-grade security.</p>
+                <h4>Enterprise Control</h4>
+                <p>Manage users, drive status, and recruiter access controls securely.</p>
               </div>
             </div>
           </div>
@@ -141,12 +141,9 @@ export default function LoginAdmin() {
               <div className="mockup-line"></div>
             </div>
 
-            <div className="match-badge">
-              <div className="match-score">92%</div>
-              <div className="match-label">Match Score</div>
-              <div className="match-stars">
-                <FaStar /><FaStar /><FaStar /><FaStar /><FaStar />
-              </div>
+            <div className="match-badge" style={{ background: "#FFF7ED", borderColor: "#FDBA74" }}>
+              <div className="match-score" style={{ color: "#EA580C" }}>HR Admin</div>
+              <div className="match-label" style={{ color: "#C2410C" }}>Recruiter Control</div>
             </div>
           </div>
         </div>
@@ -155,31 +152,32 @@ export default function LoginAdmin() {
       {/* RIGHT SIDE PANEL */}
       <div className="login-right">
         <div className="top-bar">
+          <button
+            className="create-account-btn"
+            style={{ border: "1px solid #CBD5E1", color: "#64748B", marginRight: "auto" }}
+            onClick={() => navigate("/")}
+          >
+            <FaArrowLeft /> Home
+          </button>
           <span className="top-bar-text">New admin?</span>
-          <button className="create-account-btn" onClick={() => navigate("/register-admin")}>
+          <button className="create-account-btn" style={{ borderColor: "#EA580C", color: "#EA580C" }} onClick={() => navigate("/register-admin")}>
             <FaUserPlus /> Create Admin
           </button>
         </div>
 
         <div className="login-card">
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#FFF7ED", color: "#EA580C", padding: "4px 12px", borderRadius: "12px", fontSize: "12px", fontWeight: "700", marginBottom: "16px" }}>
+            <FaShieldAlt /> Recruiter Admin Portal
+          </div>
+
           <h1 className="card-title">Welcome Back</h1>
           <p className="card-subtitle">Login to access Recruiter Dashboard</p>
-
-          {/* TOGGLE TABS */}
-          <div className="role-toggle">
-            <button className="toggle-tab" onClick={() => navigate("/login-user")}>
-              <FaUser /> User Login
-            </button>
-            <button className="toggle-tab active">
-              <FaShieldAlt /> Admin Login
-            </button>
-          </div>
 
           {showError && <div className="error-banner">{errorMessage}</div>}
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>Email Address</label>
+              <label>Admin Email Address</label>
               <div className="input-wrapper">
                 <FaEnvelope className="input-icon" />
                 <input
@@ -225,18 +223,18 @@ export default function LoginAdmin() {
                 Remember me
               </label>
 
-              <a href="#" className="forgot-link" onClick={(e) => e.preventDefault()}>
+              <a href="#" className="forgot-link" style={{ color: "#EA580C" }} onClick={(e) => e.preventDefault()}>
                 Forgot password?
               </a>
             </div>
 
-            <button type="submit" className="submit-btn" disabled={loading}>
-              {loading ? "Logging in..." : <>Login as Admin <FaArrowRight /></>}
+            <button type="submit" className="submit-btn" style={{ background: "#EA580C", boxShadow: "0 4px 12px rgba(234, 88, 12, 0.25)" }} disabled={loading}>
+              {loading ? "Logging in..." : <>Continue as Admin <FaArrowRight /></>}
             </button>
           </form>
 
           <div className="privacy-banner">
-            <div className="privacy-icon">
+            <div className="privacy-icon" style={{ background: "#FFF7ED", color: "#EA580C" }}>
               <FaShieldAlt />
             </div>
             <div className="privacy-text">
