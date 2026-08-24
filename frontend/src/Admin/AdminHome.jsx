@@ -16,8 +16,7 @@ import {
   FaCode,
   FaChevronDown,
   FaChevronLeft,
-  FaChevronRight,
-  FaTimes
+  FaChevronRight
 } from "react-icons/fa";
 
 export default function AdminHome() {
@@ -55,19 +54,6 @@ export default function AdminHome() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("ALL");
   const [selectedLocation, setSelectedLocation] = useState("ALL");
-
-  // Create Drive Modal State
-  const [showModal, setShowModal] = useState(false);
-  const [driveForm, setDriveForm] = useState({
-    companyName: "Google",
-    driveName: "",
-    role: "",
-    location: "Bangalore, India",
-    experience: "0-2 years",
-    description: "",
-    jdText: ""
-  });
-  const [submitting, setSubmitting] = useState(false);
 
   // Fetch drives and stats from Spring Boot Backend
   const fetchDashboardData = async () => {
@@ -113,44 +99,6 @@ export default function AdminHome() {
   const handleLogout = () => {
     sessionStorage.clear();
     navigate("/login-admin");
-  };
-
-  // Create Drive Submission to backend API
-  const handleCreateDrive = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
-
-    try {
-      const formData = new FormData();
-      formData.append("companyName", driveForm.companyName);
-      formData.append("driveName", driveForm.driveName);
-      formData.append("role", driveForm.role);
-      formData.append("location", driveForm.location);
-      formData.append("experience", driveForm.experience);
-      formData.append("description", driveForm.description);
-      formData.append("jdText", driveForm.jdText);
-
-      await authApi.createDrive(formData);
-
-      setShowModal(false);
-      setDriveForm({
-        companyName: "Google",
-        driveName: "",
-        role: "",
-        location: "Bangalore, India",
-        experience: "0-2 years",
-        description: "",
-        jdText: ""
-      });
-
-      // Refresh list from backend
-      fetchDashboardData();
-    } catch (err) {
-      console.error("Create Drive Error:", err);
-      alert("Failed to create drive. Check your backend connection.");
-    } finally {
-      setSubmitting(false);
-    }
   };
 
   // Filter drives dynamically
@@ -270,7 +218,7 @@ export default function AdminHome() {
               <p>View and manage all hiring drives created by you.</p>
             </div>
 
-            <button className="create-drive-btn" onClick={() => setShowModal(true)}>
+            <button className="create-drive-btn" onClick={() => navigate("/create-drive")}>
               <FaPlus /> Create New Drive
             </button>
           </div>
@@ -422,96 +370,6 @@ export default function AdminHome() {
           </div>
         </div>
       </main>
-
-      {/* CREATE DRIVE MODAL */}
-      {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-card">
-            <div className="modal-header">
-              <h3><FaPlus style={{ color: "#4F46E5" }} /> Create New Hiring Drive</h3>
-              <button className="modal-close-btn" onClick={() => setShowModal(false)}>
-                <FaTimes />
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateDrive}>
-              <div className="form-group">
-                <label>Company Name</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={driveForm.companyName}
-                  onChange={(e) => setDriveForm({ ...driveForm, companyName: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Drive Name</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  placeholder="e.g. Software Engineer Drive"
-                  value={driveForm.driveName}
-                  onChange={(e) => setDriveForm({ ...driveForm, driveName: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Role / Position</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  placeholder="e.g. Software Engineer"
-                  value={driveForm.role}
-                  onChange={(e) => setDriveForm({ ...driveForm, role: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Location</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  placeholder="e.g. Bangalore, India"
-                  value={driveForm.location}
-                  onChange={(e) => setDriveForm({ ...driveForm, location: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Experience Required</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  placeholder="e.g. 0-2 years"
-                  value={driveForm.experience}
-                  onChange={(e) => setDriveForm({ ...driveForm, experience: e.target.value })}
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Job Description Text</label>
-                <textarea
-                  className="form-input"
-                  rows="4"
-                  placeholder="Paste Job Description requirements text here..."
-                  value={driveForm.jdText}
-                  onChange={(e) => setDriveForm({ ...driveForm, jdText: e.target.value })}
-                  required
-                ></textarea>
-              </div>
-
-              <button type="submit" className="submit-btn" disabled={submitting} style={{ marginTop: "16px" }}>
-                {submitting ? "Creating Drive..." : "Create Drive"}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
