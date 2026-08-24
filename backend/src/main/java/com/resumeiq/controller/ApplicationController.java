@@ -69,7 +69,7 @@ public class ApplicationController {
 
         return ResponseEntity.ok(
                 applicationService
-                        .getApplicationsByUser(userId)
+                        .getApplicationsByApplicantId(userId)
         );
     }
 
@@ -85,7 +85,7 @@ public class ApplicationController {
 
         return ResponseEntity.ok(
                 applicationService
-                        .getApplicationsByDrive(driveId)
+                        .getApplicationsByDriveId(driveId)
         );
     }
 }

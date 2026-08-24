@@ -116,6 +116,12 @@ public class ApplicationService {
             scoreResponse = calculateDeterministicScore(resume, drive);
         }
 
+        String matchedSkillsStr = scoreResponse.getMatchedSkills() != null ? String.join(", ", scoreResponse.getMatchedSkills()) : "";
+        String missingSkillsStr = scoreResponse.getMissingSkills() != null ? String.join(", ", scoreResponse.getMissingSkills()) : "";
+        String strengthsStr = scoreResponse.getStrengths() != null ? String.join("; ", scoreResponse.getStrengths()) : "";
+        String weaknessesStr = scoreResponse.getWeaknesses() != null ? String.join("; ", scoreResponse.getWeaknesses()) : "";
+        String feedbackStr = scoreResponse.getFeedback() != null ? scoreResponse.getFeedback() : "Evaluated via ResumeIQ Match Engine";
+
         // 8. CREATE APPLICATION
         Application application = Application.builder()
                 .applicant(applicant)
@@ -128,11 +134,11 @@ public class ApplicationService {
                 .educationScore(scoreResponse.getEducationScore())
                 .projectScore(scoreResponse.getProjectScore())
                 .relevanceScore(scoreResponse.getRelevanceScore())
-                .matchedSkills(scoreResponse.getMatchedSkills())
-                .missingSkills(scoreResponse.getMissingSkills())
-                .strengths(scoreResponse.getStrengths())
-                .weaknesses(scoreResponse.getWeaknesses())
-                .aiFeedback(scoreResponse.getAiFeedback())
+                .matchedSkills(matchedSkillsStr)
+                .missingSkills(missingSkillsStr)
+                .strengths(strengthsStr)
+                .weaknesses(weaknessesStr)
+                .aiFeedback(feedbackStr)
                 .build();
 
         return applicationRepository.save(application);
@@ -180,11 +186,11 @@ public class ApplicationService {
         res.setEducationScore(educationScore);
         res.setProjectScore(projectScore);
         res.setRelevanceScore(relevanceScore);
-        res.setMatchedSkills(matched.isEmpty() ? drive.getRequiredSkills() : String.join(", ", matched));
-        res.setMissingSkills(String.join(", ", missing));
-        res.setStrengths("Strong alignment with core job requirements and skills.");
-        res.setWeaknesses(missing.isEmpty() ? "No critical skill gaps identified." : "Additional experience recommended in: " + String.join(", ", missing));
-        res.setAiFeedback("Evaluated via ResumeIQ Match Engine.");
+        res.setMatchedSkills(matched.isEmpty() ? List.of(drive.getRequiredSkills() != null ? drive.getRequiredSkills() : "Relevant Candidate Skills") : matched);
+        res.setMissingSkills(missing);
+        res.setStrengths(List.of("Strong alignment with core job requirements and skills."));
+        res.setWeaknesses(missing.isEmpty() ? List.of("No critical skill gaps identified.") : List.of("Additional experience recommended in: " + String.join(", ", missing)));
+        res.setFeedback("Evaluated via ResumeIQ Match Engine.");
 
         return res;
     }
