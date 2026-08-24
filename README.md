@@ -1,33 +1,32 @@
-# ResumeIQ - Smart Resume Screener 🚀
+# ResumeIQ - Smart Resume Screener
 
-> **Intelligent AI-Powered Applicant Tracking & Resume Screening System**  
-> Automatically parse PDF resumes, extract structured candidate profiles, compute semantic ATS match scores against Job Descriptions using **Google Gemini LLM**, and display shortlisted candidates with recruiter-level justifications.
-
----
-
-## 🌟 Live Deployments & Repository Links
-
-- 🌐 **Live Web Application (Vercel)**: `https://resumeiq-frontend.vercel.app`
-- ⚙️ **Live Backend API (Render)**: `https://resumeiq-backend-d7s5.onrender.com`
-- 📁 **GitHub Repository**: [https://github.com/krishnachaitanyabalasa-del/ResumeIQ.git](https://github.com/krishnachaitanyabalasa-del/ResumeIQ.git)
-- 📹 **Demo Video (2–3 min)**: `[Insert Demo Video Link Here]`
+> Intelligent AI-Powered Applicant Tracking & Resume Screening System  
+> Automatically parse PDF resumes, extract structured candidate profiles, compute semantic ATS match scores against Job Descriptions using Google Gemini LLM, and display shortlisted candidates with recruiter-level justifications.
 
 ---
 
-## 📌 Problem Statement & Objective
+## Live Deployments & Repository Links
+
+- Live Web Application: https://resumeiq-hazel.vercel.app/
+- GitHub Repository: https://github.com/krishnachaitanyabalasa-del/ResumeIQ.git
+- Demo Video (2–3 min): [Insert Demo Video Link Here]
+
+---
+
+## Problem Statement & Objective
 
 Modern recruitment workflows suffer from manual resume screening bottlenecks, keyword-stuffing exploits, and lack of objective scoring standards. 
 
-**ResumeIQ** solves this by providing an end-to-end automated **Smart Resume Screener** that:
-1. **Parses PDF & Text Resumes**: Extracts raw text and converts un-structured documents into structured JSON objects.
-2. **Performs Semantic LLM Matching**: Evaluates candidate suitability against Job Descriptions using Google Gemini AI beyond simple keyword matching.
-3. **Calculates Detailed ATS Scores**: Generates overall match scores (0–100) alongside granular sub-scores (Skills 40%, Experience 20%, Education 10%, Projects 20%, Relevance 10%).
-4. **Delivers Shortlisted Candidates**: Renders recruiter dashboards displaying candidate phone numbers, emails, matched skills, missing skills, strengths, weaknesses, and direct PDF resume viewers.
-5. **Includes Multi-API Key Quota Failover**: Automatically rotates across up to 3 Gemini API keys when quota limits are reached, with a deterministic fallback engine to guarantee 100% uptime.
+ResumeIQ solves this by providing an end-to-end automated Smart Resume Screener that:
+1. Parses PDF & Text Resumes: Extracts raw text and converts un-structured documents into structured JSON objects.
+2. Performs Semantic LLM Matching: Evaluates candidate suitability against Job Descriptions using Google Gemini AI beyond simple keyword matching.
+3. Calculates Detailed ATS Scores: Generates overall match scores (0–100) alongside granular sub-scores (Skills 40%, Experience 20%, Education 10%, Projects 20%, Relevance 10%).
+4. Delivers Shortlisted Candidates: Renders recruiter dashboards displaying candidate phone numbers, emails, matched skills, missing skills, strengths, weaknesses, and direct PDF resume viewers.
+5. Includes Multi-API Key Quota Failover: Automatically rotates across up to 3 Gemini API keys when quota limits are reached, with a deterministic fallback engine to guarantee 100% uptime.
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 ```mermaid
 graph TD
@@ -40,18 +39,18 @@ graph TD
 
 ### Tech Stack
 
-- **Frontend**: React 18, Vite, React Router v6, Axios, Custom CSS, FontAwesome Icons.
-- **Backend API**: Java 21, Spring Boot 3.3.2, Spring Security, JWT (Json Web Token), Spring Data JPA, Hibernate, Apache PDFBox.
-- **Database**: MySQL 8.4 hosted on **Aiven Cloud**.
-- **Cloud Deployment**: 
-  - **Backend**: Render Web Service (Java 21 / Docker Runtime)
-  - **Frontend**: Vercel Single-Page Application (SPA)
+- Frontend: React 18, Vite, React Router v6, Axios, Custom CSS, FontAwesome Icons.
+- Backend API: Java 21, Spring Boot 3.3.2, Spring Security, JWT (Json Web Token), Spring Data JPA, Hibernate, Apache PDFBox.
+- Database: MySQL 8.4 hosted on Aiven Cloud.
+- Cloud Deployment:
+  - Backend: Render Web Service (Java 21 / Docker Runtime)
+  - Frontend: Vercel Single-Page Application (SPA)
 
 ---
 
-## 🤖 LLM Prompts & Usage Guidance
+## LLM Prompts & Usage Guidance
 
-### 1. Resume Data Extraction Prompt (`extractResumeData`)
+### 1. Resume Data Extraction Prompt (extractResumeData)
 Used to transform raw resume text extracted by Apache PDFBox into a structured JSON schema.
 
 ```text
@@ -92,7 +91,7 @@ Resume text:
 
 ---
 
-### 2. Semantic ATS Matching & Scoring Prompt (`calculateResumeScore`)
+### 2. Semantic ATS Matching & Scoring Prompt (calculateResumeScore)
 Evaluates candidate fit against Job Description criteria on a scale of 0 to 100 with qualitative feedback.
 
 ```text
@@ -133,27 +132,27 @@ CANDIDATE RESUME DATA:
 
 ---
 
-## ⚡ Key Features
+## Key Features
 
-- **Multi-Role User Portals**:
-  - **Recruiter / HR Admin Portal**: Create hiring drives with custom Job Descriptions, specify required skills/experience, manage drive statuses (Open, Upcoming, Closed, Completed), and review shortlisted candidates.
-  - **Candidate Portal**: Browse active hiring drives, submit applications with 9 structured form sections, upload PDF resumes, and track application status.
-- **Candidate Evaluation Modal**:
+- Multi-Role User Portals:
+  - Recruiter / HR Admin Portal: Create hiring drives with custom Job Descriptions, specify required skills/experience, manage drive statuses (Open, Upcoming, Closed, Completed), and review shortlisted candidates.
+  - Candidate Portal: Browse active hiring drives, submit applications with 9 structured form sections, upload PDF resumes, and track application status.
+- Candidate Evaluation Modal:
   - View overall match score, breakdown bars, matched vs. missing skills, strengths, weaknesses, phone numbers, and download submitted PDF resumes.
-- **Export Capabilities**:
+- Export Capabilities:
   - One-click export of candidate application shortlists to CSV / Excel.
-- **Resilient Multi-API Key Failover**:
-  - Pool of up to 3 Gemini API keys (`GOOGLE_API_KEYS`). If key #1 hits quota limit (`429 Resource Exhausted`), the backend seamlessly rotates to key #2 and key #3 automatically.
+- Resilient Multi-API Key Failover:
+  - Pool of up to 3 Gemini API keys (GOOGLE_API_KEYS). If key #1 hits quota limit (429 Resource Exhausted), the backend seamlessly rotates to key #2 and key #3 automatically.
 
 ---
 
-## 🛠️ Local Installation & Setup Guide
+## Local Installation & Setup Guide
 
 ### Prerequisites
-- **Java 21 JDK**
-- **Maven 3.9+**
-- **Node.js 18+ & npm**
-- **MySQL 8.0+**
+- Java 21 JDK
+- Maven 3.9+
+- Node.js 18+ & npm
+- MySQL 8.0+
 
 ### 1. Backend Setup
 
@@ -171,7 +170,7 @@ export GOOGLE_API_KEYS="AIzaSyKey1...,AIzaSyKey2...,AIzaSyKey3..."
 # Build and run backend server
 mvn clean spring-boot:run
 ```
-*Backend API will start running at `http://localhost:8080`.*
+*Backend API will start running at http://localhost:8080.*
 
 ---
 
@@ -187,11 +186,11 @@ npm install
 # Start Vite development server
 npm run dev
 ```
-*Frontend web application will start running at `http://localhost:5173`.*
+*Frontend web application will start running at http://localhost:5173.*
 
 ---
 
-## 📑 Project Structure
+## Project Structure
 
 ```text
 ResumeIQ/
@@ -224,18 +223,18 @@ ResumeIQ/
 
 ---
 
-## 📋 Deliverables Checklist
+## Deliverables Checklist
 
-- [x] **GitHub Repository with Granular Commits**: Verified on `main` branch.
-- [x] **README with Architecture & LLM Prompts**: Complete documentation above.
-- [x] **Structured Resume Data Extraction**: PDFBox + Gemini JSON parser.
-- [x] **Semantic LLM Match Scoring**: Gemini 3.7 Flash API + Fallback match engine.
-- [x] **Live Web Deployments**: Render (Backend) & Vercel (Frontend).
-- [ ] **2–3 min Demo Video**: `[Insert YouTube / Loom Video Link]`
+- [x] GitHub Repository with Granular Commits: Verified on main branch.
+- [x] README with Architecture & LLM Prompts: Complete documentation above.
+- [x] Structured Resume Data Extraction: PDFBox + Gemini JSON parser.
+- [x] Semantic LLM Match Scoring: Gemini 3.7 Flash API + Fallback match engine.
+- [x] Live Web Deployments: Vercel (Frontend).
+- [ ] 2–3 min Demo Video: [Insert YouTube / Loom Video Link]
 
 ---
 
-## 👨‍💻 Author & Acknowledgements
+## Author & Acknowledgements
 
-Developed by **Krishna Chaitanyabalasa** for the **Smart Resume Screener** evaluation.  
-Powered by **Spring Boot**, **React**, **Google Gemini AI**, **Aiven Cloud MySQL**, **Render**, and **Vercel**.
+Developed by Krishna Chaitanya Balasa for the Smart Resume Screener evaluation.  
+Powered by Spring Boot, React, Google Gemini AI, Aiven Cloud MySQL, Render, and Vercel.
