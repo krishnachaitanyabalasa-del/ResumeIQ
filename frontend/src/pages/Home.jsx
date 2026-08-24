@@ -14,7 +14,11 @@ import {
   FaBolt,
   FaBullseye,
   FaBell,
-  FaCheck
+  FaCheck,
+  FaUsers,
+  FaChartLine,
+  FaSearch,
+  FaLeaf
 } from "react-icons/fa";
 
 export default function Home() {
@@ -54,32 +58,61 @@ export default function Home() {
           <p className="hero-description">
             ResumeIQ uses AI to screen resumes, match the right talent, and connect great people with great opportunities.
           </p>
+
+          <div className="hero-accent-line">
+            <span className="accent-bar"></span>
+            <span className="accent-dot"></span>
+          </div>
         </div>
 
+        {/* HERO GRAPHIC ILLUSTRATION (MATCHING MOCKUP) */}
         <div className="hero-right">
-          <div className="graphic-card">
-            <div className="graphic-header">
-              <div className="graphic-dots">
-                <div className="graphic-dot"></div>
-                <div className="graphic-dot"></div>
-                <div className="graphic-dot"></div>
-              </div>
-              <div className="graphic-score-badge">92% Match</div>
+          <div className="hero-illustration-wrapper">
+            <div className="hero-bg-glow"></div>
+
+            {/* FLOATING LEFT BADGES */}
+            <div className="floating-badge floating-badge-users">
+              <FaUsers />
+            </div>
+            <div className="floating-badge floating-badge-chart">
+              <FaChartLine />
+            </div>
+            <div className="floating-badge floating-badge-check">
+              <FaCheck />
             </div>
 
-            <div className="graphic-body">
-              <div className="candidate-avatar">
-                <FaUser />
+            {/* CENTRAL 3D MONITOR */}
+            <div className="monitor-container">
+              <div className="monitor-header">
+                <div className="monitor-dots">
+                  <div className="monitor-dot"></div>
+                  <div className="monitor-dot"></div>
+                  <div className="monitor-dot"></div>
+                </div>
+                <div className="circle-score-badge">92%</div>
               </div>
-              <div className="candidate-info">
-                <div className="info-line long"></div>
-                <div className="info-line medium"></div>
-                <div className="info-line short"></div>
 
-                <div className="graphic-stars">
+              <div className="monitor-body">
+                <div className="monitor-avatar">
+                  <FaUser />
+                </div>
+                <div className="monitor-lines">
+                  <div className="monitor-line w80"></div>
+                  <div className="monitor-line w60"></div>
+                </div>
+                <div className="monitor-stars">
                   <FaStar /><FaStar /><FaStar /><FaStar /><FaStar />
                 </div>
               </div>
+            </div>
+
+            {/* FLOATING MAGNIFYING GLASS & PLANT */}
+            <div className="floating-magnifier">
+              <FaSearch />
+            </div>
+
+            <div className="floating-plant">
+              <FaLeaf />
             </div>
           </div>
         </div>
