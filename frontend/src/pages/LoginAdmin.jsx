@@ -10,9 +10,8 @@ import {
   FaShieldAlt,
   FaUserPlus,
   FaArrowRight,
-  FaChartPie,
   FaBuilding,
-  FaUsersCheck,
+  FaUserCheck,
   FaFileAlt,
   FaArrowLeft
 } from "react-icons/fa";
@@ -115,7 +114,7 @@ export default function LoginAdmin() {
 
             <div className="feature-item">
               <div className="feature-icon" style={{ background: "#FFEDD5", color: "#EA580C" }}>
-                <FaUsersCheck />
+                <FaUserCheck />
               </div>
               <div className="feature-details">
                 <h4>AI Candidate Ranking</h4>
