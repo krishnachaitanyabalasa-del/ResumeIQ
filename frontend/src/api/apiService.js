@@ -19,6 +19,16 @@ export const authApi = {
 
   // Get Admin Profile
   getAdminProfile: (adminId) => axiosInstance.get(`/admin/${adminId}`),
+
+  // Drives API
+  getMyDrives: () => axiosInstance.get("/drives/my-drives"),
+
+  getMyDriveStats: () => axiosInstance.get("/drives/my-drives/stats"),
+
+  createDrive: (formData) =>
+    axiosInstance.post("/drives", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
 };
 
 export default authApi;
