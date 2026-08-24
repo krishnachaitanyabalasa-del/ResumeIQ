@@ -13,7 +13,6 @@ import {
   FaCheckCircle,
   FaMapMarkerAlt,
   FaEllipsisV,
-  FaCode,
   FaChevronDown,
   FaChevronLeft,
   FaChevronRight
@@ -284,9 +283,9 @@ export default function AdminHome() {
                   <th>Drive Name</th>
                   <th>Role / Position</th>
                   <th>Location</th>
-                  <th>Company</th>
+                  <th>Candidates</th>
                   <th>Status</th>
-                  <th>Created By</th>
+                  <th>Created On</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -304,74 +303,90 @@ export default function AdminHome() {
                     </td>
                   </tr>
                 ) : (
-                  filteredDrives.map((drive) => (
-                    <tr key={drive.id}>
-                      <td>
-                        <div className="drive-name-cell">
-                          <div className="drive-code-icon">
-                            {drive.companyLogo ? (
-                              <img
-                                src={drive.companyLogo}
-                                alt={drive.companyName || "Logo"}
-                                className="drive-company-logo-img"
-                              />
-                            ) : (
-                              <FaCode />
-                            )}
+                  filteredDrives.map((drive) => {
+                    const companyFirstLetter = (drive.companyName || drive.driveName || "C")
+                      .charAt(0)
+                      .toUpperCase();
+
+                    return (
+                      <tr key={drive.id}>
+                        <td>
+                          <div className="drive-name-cell">
+                            <div className="drive-code-icon">
+                              {drive.companyLogo ? (
+                                <img
+                                  src={drive.companyLogo}
+                                  alt={drive.companyName || "Logo"}
+                                  className="drive-company-logo-img"
+                                />
+                              ) : (
+                                <span className="company-initial-badge">{companyFirstLetter}</span>
+                              )}
+                            </div>
+                            <div>
+                              <div className="drive-info-title">{drive.driveName}</div>
+                              <div className="drive-info-code">JD-{drive.id}</div>
+                            </div>
                           </div>
-                          <div>
-                            <div className="drive-info-title">{drive.driveName}</div>
-                            <div className="drive-info-code">JD-{drive.id}</div>
+                        </td>
+
+                        <td>
+                          <div className="role-title">{drive.role}</div>
+                          <div className="role-type">{drive.experience || "Full-time"}</div>
+                        </td>
+
+                        <td>
+                          <div className="location-cell">
+                            <div className="location-text">
+                              <FaMapMarkerAlt style={{ color: "#94A3B8", fontSize: "12px" }} />
+                              {drive.location}
+                            </div>
                           </div>
-                        </div>
-                      </td>
+                        </td>
 
-                      <td>
-                        <div className="role-title">{drive.role}</div>
-                        <div className="role-type">{drive.experience || "0-2 years"}</div>
-                      </td>
+                        <td>
+                          <div className="candidates-count">{drive.applicationsCount || drive.candidatesCount || 0}</div>
+                          <span className="candidates-label">Applied</span>
+                        </td>
 
-                      <td>
-                        <div className="location-cell">
-                          <div className="location-text">
-                            <FaMapMarkerAlt style={{ color: "#94A3B8", fontSize: "12px" }} />
-                            {drive.location}
+                        <td>
+                          <span
+                            className={`status-badge ${
+                              (drive.status || "").toUpperCase() === "OPEN" || (drive.status || "").toUpperCase() === "ACTIVE"
+                                ? "status-active"
+                                : (drive.status || "").toUpperCase() === "COMPLETED"
+                                ? "status-completed"
+                                : "status-upcoming"
+                            }`}
+                          >
+                            {(drive.status || "OPEN").toUpperCase()}
+                          </span>
+                        </td>
+
+                        <td>
+                          <div className="created-date">
+                            {drive.createdAt
+                              ? new Date(drive.createdAt).toLocaleDateString("en-GB", {
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "numeric"
+                                })
+                              : "24 May 2024"}
                           </div>
-                        </div>
-                      </td>
+                          <span className="created-by">by {drive.createdByEmail || adminName}</span>
+                        </td>
 
-                      <td>
-                        <div className="candidates-count">{drive.companyName || "Google"}</div>
-                      </td>
-
-                      <td>
-                        <span
-                          className={`status-badge ${
-                            (drive.status || "").toUpperCase() === "OPEN" || (drive.status || "").toUpperCase() === "ACTIVE"
-                              ? "status-active"
-                              : (drive.status || "").toUpperCase() === "COMPLETED"
-                              ? "status-completed"
-                              : "status-upcoming"
-                          }`}
-                        >
-                          {(drive.status || "OPEN").toUpperCase()}
-                        </span>
-                      </td>
-
-                      <td>
-                        <div className="created-date">{drive.createdByEmail || adminEmail}</div>
-                      </td>
-
-                      <td>
-                        <button className="action-btn-view" onClick={() => navigate(`/admin/drives/${drive.id}`)}>
-                          View Details
-                        </button>
-                        <button className="action-dots">
-                          <FaEllipsisV />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
+                        <td>
+                          <button className="action-btn-view" onClick={() => navigate(`/admin/drives/${drive.id}`)}>
+                            View Details
+                          </button>
+                          <button className="action-dots">
+                            <FaEllipsisV />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>

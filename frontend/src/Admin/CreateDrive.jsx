@@ -39,12 +39,16 @@ export default function CreateDrive() {
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Handle Logo Upload
+  // Handle Logo Upload with Base64 conversion
   const handleLogoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setCompanyLogoFile(file);
-      setLogoPreviewUrl(URL.createObjectURL(file));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setLogoPreviewUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -100,6 +104,9 @@ export default function CreateDrive() {
 
       if (companyLogoFile) {
         formData.append("companyLogoFile", companyLogoFile);
+      }
+      if (logoPreviewUrl) {
+        formData.append("companyLogo", logoPreviewUrl);
       }
 
       if (form.jdType === "text") {

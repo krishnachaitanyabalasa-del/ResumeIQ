@@ -373,7 +373,7 @@
   font-weight: 800;
   flex-shrink: 0;
   overflow: hidden;
-  border: 1px solid #E2E8F0;
+  border: 1px solid #C7D2FE;
   padding: 2px;
 }
 
@@ -382,6 +382,13 @@
   height: 100%;
   object-fit: contain;
   border-radius: 8px;
+}
+
+.company-initial-badge {
+  font-size: 18px;
+  font-weight: 800;
+  color: #4F46E5;
+  text-transform: uppercase;
 }
 
 .drive-info-title {

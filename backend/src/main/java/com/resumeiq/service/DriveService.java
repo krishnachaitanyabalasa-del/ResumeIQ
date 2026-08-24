@@ -8,11 +8,13 @@ import com.google.genai.types.GenerateContentResponse;
 import com.resumeiq.dto.JDRequirements;
 import com.resumeiq.entity.Drive;
 import com.resumeiq.repository.DriveRepository;
+import jakarta.annotation.PostConstruct;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +31,9 @@ public class DriveService {
 
     @Autowired
     private JDParserService jdParserService;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -51,6 +56,16 @@ public class DriveService {
         this.geminiClient = Client.builder()
                 .apiKey(apiKey)
                 .build();
+    }
+
+    @PostConstruct
+    public void ensureLongtextColumn() {
+        try {
+            jdbcTemplate.execute("ALTER TABLE drives MODIFY COLUMN company_logo LONGTEXT");
+            System.out.println("MySQL DB Migration: Altered drives.company_logo to LONGTEXT successfully.");
+        } catch (Exception e) {
+            System.out.println("MySQL DB Migration Notice: " + e.getMessage());
+        }
     }
 
     // ============================================================
@@ -110,6 +125,9 @@ public class DriveService {
             }
             finalCompanyLogo = "data:" + contentType + ";base64," + base64Logo;
             System.out.println("Converted company logo file to Base64 data URL. Length: " + finalCompanyLogo.length());
+        } else if (companyLogo != null && !companyLogo.isBlank()) {
+            finalCompanyLogo = companyLogo;
+            System.out.println("Received string company logo. Length: " + finalCompanyLogo.length());
         }
 
         // --------------------------------------------------------
@@ -170,21 +188,6 @@ public class DriveService {
 
         System.out.println(
                 "4. JD parsing completed."
-        );
-
-        System.out.println(
-                "Skills: "
-                        + requirements.getRequiredSkills()
-        );
-
-        System.out.println(
-                "Experience: "
-                        + requirements.getRequiredExperience()
-        );
-
-        System.out.println(
-                "Education: "
-                        + requirements.getRequiredEducation()
         );
 
         // --------------------------------------------------------
