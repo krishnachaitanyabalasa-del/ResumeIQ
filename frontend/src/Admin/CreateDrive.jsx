@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../api/apiService";
+import AdminNavbar from "../components/AdminNavbar";
 import "./CreateDrive.css";
 import {
-  FaFileAlt,
-  FaBell,
   FaArrowLeft,
   FaPlus,
   FaBriefcase,
@@ -55,42 +54,41 @@ export default function CreateDrive() {
     }
   };
 
-  // Handle PDF Upload
-  const handlePdfChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setJdFile(file);
-    }
+  // Handle Input Changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Form Submission
+  // Preset Companies
+  const presetLogos = [
+    { name: "Infosys", logo: "https://upload.wikimedia.org/wikipedia/commons/9/95/Infosys_logo.svg" },
+    { name: "TCS", logo: "https://upload.wikimedia.org/wikipedia/commons/b/b1/Tata_Consultancy_Services_Logo.svg" },
+    { name: "Wipro", logo: "https://upload.wikimedia.org/wikipedia/commons/a/a0/Wipro_Primary_Logo_Color_RGB.svg" },
+    { name: "Accenture", logo: "https://upload.wikimedia.org/wikipedia/commons/c/cd/Accenture.svg" }
+  ];
+
+  const handleSelectPreset = (company) => {
+    setForm((prev) => ({ ...prev, companyName: company.name }));
+    setLogoPreviewUrl(company.logo);
+    setCompanyLogoFile(null);
+  };
+
+  // Submit Handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
 
-    if (!form.driveName.trim()) {
-      setErrorMessage("Drive Name is required.");
+    if (!form.companyName.trim()) {
+      setErrorMessage("Company Name is required.");
       return;
     }
-    if (!form.companyName.trim()) {
-      setErrorMessage("Company / Organization Name is required.");
+    if (!form.driveName.trim()) {
+      setErrorMessage("Drive Title is required.");
       return;
     }
     if (!form.role.trim()) {
       setErrorMessage("Role / Position is required.");
-      return;
-    }
-    if (!form.location.trim()) {
-      setErrorMessage("Location is required.");
-      return;
-    }
-
-    if (form.jdType === "pdf" && !jdFile) {
-      setErrorMessage("Please select a Job Description PDF file.");
-      return;
-    }
-    if (form.jdType === "text" && !form.jdText.trim()) {
-      setErrorMessage("Please enter Job Description text.");
       return;
     }
 
@@ -138,30 +136,8 @@ export default function CreateDrive() {
 
   return (
     <div className="create-drive-container">
-      {/* NAVBAR */}
-      <nav className="create-drive-navbar">
-        <div className="nav-left" onClick={() => navigate("/admin-home")}>
-          <div className="nav-brand-icon">
-            <FaFileAlt />
-          </div>
-          <div className="nav-brand-text">
-            <h2>ResumeIQ</h2>
-            <p>Find Best Opportunities. Apply. Get Matched.</p>
-          </div>
-        </div>
-
-        <div className="nav-right">
-          <div className="notification-btn">
-            <FaBell />
-            <span className="notification-badge">3</span>
-          </div>
-
-          <div className="user-profile-badge">
-            <div className="user-avatar">A</div>
-            <span>Admin</span>
-          </div>
-        </div>
-      </nav>
+      {/* REUSABLE ADMIN NAVBAR */}
+      <AdminNavbar />
 
       {/* CONTENT WRAPPER */}
       <main className="create-drive-content">
@@ -173,125 +149,149 @@ export default function CreateDrive() {
           </div>
 
           <button className="back-btn" onClick={() => navigate("/admin-home")}>
-            <FaArrowLeft /> Back to Drives
+            <FaArrowLeft /> Back to Dashboard
           </button>
         </div>
 
-        {errorMessage && <div className="error-banner-alert">{errorMessage}</div>}
+        {errorMessage && (
+          <div className="error-banner" style={{ background: "#FEE2E2", color: "#B91C1C", padding: "14px 20px", borderRadius: "12px", marginBottom: "20px" }}>
+            {errorMessage}
+          </div>
+        )}
 
-        {/* MAIN FORM */}
-        <form onSubmit={handleSubmit} className="create-drive-form">
-          {/* SECTION 1: BASIC INFORMATION */}
-          <div className="form-section-card">
-            <div className="section-header">
-              <div className="section-icon-badge">
-                <FaBriefcase />
+        <form onSubmit={handleSubmit} className="drive-form">
+          {/* SECTION 1: COMPANY INFORMATION */}
+          <div className="form-card">
+            <h2>1. Company Details</h2>
+
+            <div className="form-grid-2col">
+              <div className="input-group">
+                <label>Company Name *</label>
+                <input
+                  type="text"
+                  name="companyName"
+                  placeholder="e.g. TechSolutions Inc."
+                  value={form.companyName}
+                  onChange={handleChange}
+                  required
+                />
               </div>
-              <div>
-                <h2>Drive Information</h2>
-                <p>Basic details about the hiring campaign and role</p>
-              </div>
-            </div>
 
-            {/* COMPANY LOGO UPLOAD & PREVIEW */}
-            <div className="form-group-field">
-              <label>Company Logo (Optional)</label>
-              <div className="logo-upload-wrapper">
-                <div
-                  className="logo-dropzone"
-                  onClick={() => document.getElementById("logo-input").click()}
-                >
-                  <FaBuilding className="logo-drop-icon" />
-                  <p>Click to upload Company Logo image</p>
-
+              <div className="input-group">
+                <label>Company Logo</label>
+                <div className="logo-upload-wrapper">
                   <input
                     type="file"
-                    id="logo-input"
                     accept="image/*"
+                    id="logo-input"
                     onChange={handleLogoChange}
                     style={{ display: "none" }}
                   />
-                </div>
+                  <label htmlFor="logo-input" className="upload-logo-btn">
+                    <FaCloudUploadAlt /> Choose File
+                  </label>
 
-                <div className="logo-preview-box">
-                  <span style={{ fontSize: "10px", color: "#94A3B8", marginBottom: "4px" }}>Preview</span>
-                  {logoPreviewUrl ? (
-                    <img src={logoPreviewUrl} alt="Logo Preview" className="logo-preview-img" />
-                  ) : (
-                    <div style={{ textAlign: "center", color: "#CBD5E1" }}>
-                      <FaBuilding style={{ fontSize: "24px" }} />
-                      <div style={{ fontSize: "10px", color: "#94A3B8", marginTop: "2px" }}>No Logo</div>
+                  {logoPreviewUrl && (
+                    <div className="logo-preview-box">
+                      <img src={logoPreviewUrl} alt="Preview" />
                     </div>
                   )}
-                  <span className="change-logo-link" onClick={() => document.getElementById("logo-input").click()}>
-                    {logoPreviewUrl ? "Change Logo" : "Upload Logo"}
-                  </span>
                 </div>
               </div>
             </div>
 
-            {/* DRIVE NAME */}
-            <div className="form-group-field">
-              <label>Drive Name *</label>
-              <input
-                type="text"
-                className="form-input"
-                placeholder="e.g., Java Developer Drive"
-                value={form.driveName}
-                onChange={(e) => setForm({ ...form, driveName: e.target.value })}
-                required
-              />
-              <div className="field-hint">Give a clear and descriptive name to your drive.</div>
+            {/* PRESET LOGOS */}
+            <div className="preset-logos-row">
+              <span>Or choose preset:</span>
+              {presetLogos.map((p, idx) => (
+                <button
+                  type="button"
+                  key={idx}
+                  className="preset-logo-pill"
+                  onClick={() => handleSelectPreset(p)}
+                >
+                  {p.name}
+                </button>
+              ))}
             </div>
+          </div>
 
-            {/* COMPANY & ROLE 2-COL */}
-            <div className="input-row-2col">
-              <div className="form-group-field">
-                <label>Company / Organization *</label>
+          {/* SECTION 2: DRIVE DETAILS */}
+          <div className="form-card">
+            <h2>2. Drive Details</h2>
+
+            <div className="form-grid-2col" style={{ marginBottom: "16px" }}>
+              <div className="input-group">
+                <label>Drive Title *</label>
                 <input
                   type="text"
-                  className="form-input"
-                  placeholder="e.g., TCS"
-                  value={form.companyName}
-                  onChange={(e) => setForm({ ...form, companyName: e.target.value })}
+                  name="driveName"
+                  placeholder="e.g. Java Developer Drive"
+                  value={form.driveName}
+                  onChange={handleChange}
                   required
                 />
               </div>
 
-              <div className="form-group-field">
+              <div className="input-group">
                 <label>Role / Position *</label>
                 <input
                   type="text"
-                  className="form-input"
-                  placeholder="e.g., Java Developer"
+                  name="role"
+                  placeholder="e.g. Java Developer"
                   value={form.role}
-                  onChange={(e) => setForm({ ...form, role: e.target.value })}
+                  onChange={handleChange}
                   required
                 />
               </div>
             </div>
 
-            {/* LOCATION & EMPLOYMENT TYPE 2-COL */}
-            <div className="input-row-2col">
-              <div className="form-group-field">
+            <div className="form-grid-3col">
+              <div className="input-group">
                 <label>Location *</label>
                 <input
                   type="text"
-                  className="form-input"
-                  placeholder="e.g., Bangalore, India"
+                  name="location"
+                  placeholder="e.g. Bangalore, India"
                   value={form.location}
-                  onChange={(e) => setForm({ ...form, location: e.target.value })}
+                  onChange={handleChange}
                   required
                 />
               </div>
 
-              <div className="form-group-field">
+              <div className="input-group">
+                <label>Experience Required *</label>
+                <input
+                  type="text"
+                  name="experience"
+                  placeholder="e.g. 0 - 2 Years"
+                  value={form.experience}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="input-group">
+                <label>Application Last Date *</label>
+                <input
+                  type="date"
+                  name="lastDate"
+                  value={form.lastDate}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-grid-2col" style={{ marginTop: "16px" }}>
+              <div className="input-group">
                 <label>Employment Type *</label>
                 <select
-                  className="form-input"
+                  name="employmentType"
+                  className="filter-select"
+                  style={{ width: "100%", padding: "12px" }}
                   value={form.employmentType}
-                  onChange={(e) => setForm({ ...form, employmentType: e.target.value })}
-                  required
+                  onChange={handleChange}
                 >
                   <option value="Full-time">Full-time</option>
                   <option value="Part-time">Part-time</option>
@@ -299,160 +299,92 @@ export default function CreateDrive() {
                   <option value="Internship">Internship</option>
                 </select>
               </div>
-            </div>
 
-            {/* EXPERIENCE & APPLICATION LAST DATE 2-COL */}
-            <div className="input-row-2col">
-              <div className="form-group-field">
-                <label>Experience Required (Optional)</label>
+              <div className="input-group">
+                <label>Drive Storage Folder Name</label>
                 <input
                   type="text"
-                  className="form-input"
-                  placeholder="e.g., 0-2 years"
-                  value={form.experience}
-                  onChange={(e) => setForm({ ...form, experience: e.target.value })}
+                  name="driveFolder"
+                  placeholder="e.g. JavaDev_2024_01"
+                  value={form.driveFolder}
+                  onChange={handleChange}
                 />
-              </div>
-
-              <div className="form-group-field">
-                <label>Application Last Date (Optional)</label>
-                <input
-                  type="date"
-                  className="form-input"
-                  value={form.lastDate}
-                  onChange={(e) => setForm({ ...form, lastDate: e.target.value })}
-                />
-                <div className="field-hint">Last date candidates can submit applications.</div>
               </div>
             </div>
 
-            {/* DRIVE FOLDER */}
-            <div className="form-group-field">
-              <label>Drive Folder (Optional)</label>
-              <input
-                type="text"
-                className="form-input"
-                placeholder="e.g., /Drives/May 2024/Java Developer"
-                value={form.driveFolder}
-                onChange={(e) => setForm({ ...form, driveFolder: e.target.value })}
-              />
-              <div className="field-hint">Helps organize drives in custom folders.</div>
-            </div>
-
-            {/* DESCRIPTION */}
-            <div className="form-group-field">
-              <label>Description / Notes (Optional)</label>
+            <div className="input-group" style={{ marginTop: "16px" }}>
+              <label>Drive Overview / Brief Description</label>
               <textarea
-                className="form-textarea"
+                name="description"
                 rows="3"
-                placeholder="Internal notes or additional details about this drive..."
+                placeholder="Enter a short summary about this hiring drive..."
                 value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                onChange={handleChange}
               ></textarea>
             </div>
           </div>
 
-          {/* SECTION 2: JOB DESCRIPTION (JD) ATTACHMENT */}
-          <div className="form-section-card">
-            <div className="section-header">
-              <div className="section-icon-badge" style={{ backgroundColor: "#EEF2FF", color: "#4F46E5" }}>
-                <FaFilePdf />
-              </div>
-              <div>
-                <h2>Job Description (JD) Requirements</h2>
-                <p>Upload a JD PDF or paste JD text for AI parsing and candidate matching</p>
-              </div>
-            </div>
+          {/* SECTION 3: JOB DESCRIPTION (JD) SOURCE */}
+          <div className="form-card">
+            <h2>3. Job Description (JD) Source</h2>
 
-            {/* JD TYPE SELECTOR TABS */}
-            <div className="jd-type-toggle">
-              <button
-                type="button"
-                className={`jd-type-btn ${form.jdType === "pdf" ? "active" : ""}`}
-                onClick={() => setForm({ ...form, jdType: "pdf" })}
-              >
-                <FaCloudUploadAlt /> Upload PDF File
-              </button>
+            <div className="jd-type-switcher">
+              <label className={`radio-label ${form.jdType === "pdf" ? "active" : ""}`}>
+                <input
+                  type="radio"
+                  name="jdType"
+                  value="pdf"
+                  checked={form.jdType === "pdf"}
+                  onChange={handleChange}
+                />
+                Upload JD PDF File
+              </label>
 
-              <button
-                type="button"
-                className={`jd-type-btn ${form.jdType === "text" ? "active" : ""}`}
-                onClick={() => setForm({ ...form, jdType: "text" })}
-              >
-                <FaFileAlt /> Paste Text Directly
-              </button>
+              <label className={`radio-label ${form.jdType === "text" ? "active" : ""}`}>
+                <input
+                  type="radio"
+                  name="jdType"
+                  value="text"
+                  checked={form.jdType === "text"}
+                  onChange={handleChange}
+                />
+                Paste JD Text Directly
+              </label>
             </div>
 
             {form.jdType === "pdf" ? (
-              <div className="form-group-field">
-                <label>Upload JD PDF File *</label>
-
-                <div
-                  className={`file-drop-zone ${jdFile ? "has-file" : ""}`}
-                  onClick={() => document.getElementById("jd-file-input").click()}
-                >
-                  {jdFile ? (
-                    <div className="file-success-box">
-                      <FaCheck className="check-icon" />
-                      <div>
-                        <div className="file-name-text">{jdFile.name}</div>
-                        <div className="file-size-text">
-                          {(jdFile.size / 1024).toFixed(1)} KB • PDF Document
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="drop-prompt">
-                      <FaCloudUploadAlt className="upload-icon-huge" />
-                      <h3>Click to browse or drag & drop Job Description PDF</h3>
-                      <p>Supports .pdf files up to 10MB</p>
-                    </div>
-                  )}
-
-                  <input
-                    type="file"
-                    id="jd-file-input"
-                    accept="application/pdf,.pdf"
-                    onChange={handlePdfChange}
-                    style={{ display: "none" }}
-                  />
-                </div>
+              <div className="jd-upload-box" onClick={() => document.getElementById("jd-pdf-input").click()}>
+                <FaCloudUploadAlt className="upload-icon" />
+                <p>{jdFile ? jdFile.name : "Click to upload Job Description (PDF)"}</p>
+                <span className="sub-text">PDF document up to 10MB</span>
+                <input
+                  type="file"
+                  id="jd-pdf-input"
+                  accept=".pdf,application/pdf"
+                  style={{ display: "none" }}
+                  onChange={(e) => setJdFile(e.target.files[0])}
+                />
               </div>
             ) : (
-              <div className="form-group-field">
-                <label>Job Description Content *</label>
+              <div className="input-group">
                 <textarea
-                  className="form-textarea"
-                  rows="10"
-                  placeholder="Paste full Job Description text here including required skills, education, experience, and responsibilities..."
+                  name="jdText"
+                  rows="6"
+                  placeholder="Paste complete Job Description text here including skills, experience, qualifications..."
                   value={form.jdText}
-                  onChange={(e) => setForm({ ...form, jdText: e.target.value })}
+                  onChange={handleChange}
                 ></textarea>
-                <div className="field-hint">
-                  Gemini AI will analyze this text to evaluate applicant resumes automatically.
-                </div>
               </div>
             )}
           </div>
 
-          {/* FORM ACTIONS FOOTER */}
-          <div className="form-actions-footer">
-            <button
-              type="button"
-              className="cancel-btn"
-              onClick={() => navigate("/admin-home")}
-            >
+          {/* FORM FOOTER ACTIONS */}
+          <div className="form-actions-row">
+            <button type="button" className="cancel-btn" onClick={() => navigate("/admin-home")}>
               Cancel
             </button>
-
-            <button type="submit" className="submit-drive-btn" disabled={submitting}>
-              {submitting ? (
-                "Creating Drive & Parsing JD..."
-              ) : (
-                <>
-                  <FaPlus /> Create Hiring Drive
-                </>
-              )}
+            <button type="submit" className="submit-btn" disabled={submitting}>
+              {submitting ? "Creating Hiring Drive..." : "Create Hiring Drive"}
             </button>
           </div>
         </form>

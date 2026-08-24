@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../api/apiService";
+import UserNavbar from "../components/UserNavbar";
 import "./UserHomePage.css";
 import {
-  FaFileAlt,
-  FaBell,
   FaSearch,
   FaMapMarkerAlt,
   FaEye,
   FaCheck,
-  FaChevronDown,
   FaChevronLeft,
-  FaChevronRight,
-  FaBriefcase,
-  FaCalendarAlt,
-  FaBuilding,
-  FaClock
+  FaChevronRight
 } from "react-icons/fa";
 
 export default function UserHomePage() {
@@ -24,19 +18,7 @@ export default function UserHomePage() {
   // Read logged in candidate details
   const userId = sessionStorage.getItem("userId");
   const userName = sessionStorage.getItem("name") || "User";
-  const userEmail = sessionStorage.getItem("email") || "";
   const token = sessionStorage.getItem("token");
-
-  // Get Initials
-  const getInitials = (name) => {
-    if (!name) return "U";
-    const parts = name.trim().split(" ");
-    return parts.length >= 2
-      ? (parts[0][0] + parts[1][0]).toUpperCase()
-      : name.slice(0, 2).toUpperCase();
-  };
-
-  const userInitials = getInitials(userName);
 
   // States
   const [drives, setDrives] = useState([]);
@@ -82,7 +64,6 @@ export default function UserHomePage() {
       if (drivesRes.status === "fulfilled" && Array.isArray(drivesRes.value.data)) {
         fetchedDrives = drivesRes.value.data;
       } else {
-        // Fallback to open drives endpoint if getAllDrives endpoint was restricted
         try {
           const openRes = await authApi.getOpenDrives();
           if (openRes && Array.isArray(openRes.data)) {
@@ -109,11 +90,6 @@ export default function UserHomePage() {
   useEffect(() => {
     fetchCandidateData();
   }, []);
-
-  const handleLogout = () => {
-    sessionStorage.clear();
-    navigate("/login-user");
-  };
 
   // Set of applied drive IDs
   const appliedDriveIds = new Set(
@@ -158,40 +134,8 @@ export default function UserHomePage() {
 
   return (
     <div className="user-dashboard">
-      {/* TOP CANDIDATE NAVBAR */}
-      <nav className="user-navbar">
-        <div className="user-nav-left" onClick={() => navigate("/")}>
-          <div className="user-nav-brand-icon">
-            <FaFileAlt />
-          </div>
-          <div className="user-nav-brand-text">
-            <h2>ResumeIQ</h2>
-            <p>Find Best Opportunities. Apply. Get Matched.</p>
-          </div>
-        </div>
-
-        {/* NAVIGATION LINKS */}
-        <div className="user-nav-links">
-          <span className="nav-link-item" onClick={() => navigate("/")}>Home</span>
-          <span className="nav-link-item active">Drives</span>
-          <span className="nav-link-item" onClick={() => setActiveTab("APPLIED")}>My Applications</span>
-          <span className="nav-link-item">Profile</span>
-        </div>
-
-        {/* PROFILE DROPDOWN */}
-        <div className="user-nav-right">
-          <div className="notification-btn">
-            <FaBell />
-            <span className="notification-badge">3</span>
-          </div>
-
-          <div className="user-profile-dropdown" onClick={handleLogout} title="Click to Logout">
-            <div className="user-avatar-small">{userInitials}</div>
-            <span className="user-name-text">{userName}</span>
-            <FaChevronDown style={{ fontSize: "11px", color: "#94A3B8" }} />
-          </div>
-        </div>
-      </nav>
+      {/* REUSABLE USER NAVBAR WITH RED LOGOUT BUTTON */}
+      <UserNavbar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* MAIN CONTENT CONTAINER */}
       <main className="user-dashboard-content">

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../api/apiService";
+import AdminNavbar from "../components/AdminNavbar";
 import "./AdminHome.css";
 import {
-  FaFileAlt,
-  FaBell,
   FaPlus,
   FaSearch,
   FaBriefcase,
@@ -12,7 +11,6 @@ import {
   FaClock,
   FaCheckCircle,
   FaMapMarkerAlt,
-  FaEllipsisV,
   FaChevronDown,
   FaChevronLeft,
   FaChevronRight
@@ -26,7 +24,7 @@ export default function AdminHome() {
   const adminEmail = sessionStorage.getItem("email") || "";
   const token = sessionStorage.getItem("token");
 
-  // Calculate initials (e.g., "John Doe" -> "JD", "Admin" -> "AD")
+  // Calculate initials
   const getInitials = (name) => {
     if (!name) return "AD";
     const parts = name.trim().split(" ");
@@ -67,7 +65,6 @@ export default function AdminHome() {
         return;
       }
 
-      // Parallel backend requests for My Drives, Stats, and Applications
       const [drivesRes, statsRes, appsRes] = await Promise.allSettled([
         authApi.getMyDrives(),
         authApi.getMyDriveStats(),
@@ -104,11 +101,6 @@ export default function AdminHome() {
     fetchDashboardData();
   }, []);
 
-  const handleLogout = () => {
-    sessionStorage.clear();
-    navigate("/login-admin");
-  };
-
   // Filter drives dynamically
   const filteredDrives = drives.filter((d) => {
     const matchSearch =
@@ -126,7 +118,6 @@ export default function AdminHome() {
     return matchSearch && matchStatus && matchLocation;
   });
 
-  // Calculate live stat cards dynamically from drives array for instant accuracy
   const totalDrivesCount = drives.length || stats.totalDrives || 0;
   const activeDrivesCount = drives.length > 0
     ? drives.filter((d) => (d.status || "").toUpperCase() === "OPEN" || (d.status || "").toUpperCase() === "ACTIVE").length
@@ -142,31 +133,8 @@ export default function AdminHome() {
 
   return (
     <div className="admin-dashboard">
-      {/* NAVBAR */}
-      <nav className="dashboard-navbar">
-        <div className="navbar-brand" onClick={() => navigate("/")}>
-          <div className="navbar-brand-icon">
-            <FaFileAlt />
-          </div>
-          <div className="navbar-brand-text">
-            <h2>ResumeIQ</h2>
-            <p>Recruiter & HR Admin Portal</p>
-          </div>
-        </div>
-
-        <div className="navbar-right">
-          <div className="notification-btn">
-            <FaBell />
-            <span className="notification-badge">3</span>
-          </div>
-
-          <div className="admin-profile-dropdown" onClick={handleLogout} title="Click to Logout">
-            <div className="admin-avatar-small">{adminInitials}</div>
-            <span className="admin-name-text">{adminName}</span>
-            <FaChevronDown style={{ fontSize: "11px", color: "#94A3B8" }} />
-          </div>
-        </div>
-      </nav>
+      {/* GLOBAL REUSABLE ADMIN NAVBAR */}
+      <AdminNavbar />
 
       {/* DASHBOARD CONTAINER */}
       <main className="dashboard-content">
@@ -397,9 +365,6 @@ export default function AdminHome() {
                         <td>
                           <button className="action-btn-view" onClick={() => navigate(`/admin/drives/${drive.id}`)}>
                             View Details
-                          </button>
-                          <button className="action-dots">
-                            <FaEllipsisV />
                           </button>
                         </td>
                       </tr>

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { authApi } from "../api/apiService";
+import AdminNavbar from "../components/AdminNavbar";
 import "./DriveDetails.css";
 import {
   FaFileAlt,
-  FaBell,
   FaArrowLeft,
   FaBriefcase,
   FaMapMarkerAlt,
@@ -25,8 +25,7 @@ import {
   FaTimes,
   FaPhoneAlt,
   FaEnvelope,
-  FaDownload,
-  FaStar
+  FaDownload
 } from "react-icons/fa";
 
 export default function DriveDetails() {
@@ -43,8 +42,6 @@ export default function DriveDetails() {
       ? (parts[0][0] + parts[1][0]).toUpperCase()
       : name.slice(0, 2).toUpperCase();
   };
-
-  const adminInitials = getInitials(adminName);
 
   // States
   const [drive, setDrive] = useState(null);
@@ -155,23 +152,8 @@ export default function DriveDetails() {
 
   return (
     <div className="drive-details-page">
-      {/* TOP NAVBAR */}
-      <nav className="navbar-admin" style={{ display: "flex", justifyContent: "space-between", padding: "16px 32px", background: "#FFF", borderBottom: "1px solid #E2E8F0" }}>
-        <div className="navbar-left" style={{ display: "flex", alignItems: "center", gap: "12px", cursor: "pointer" }} onClick={() => navigate("/admin-home")}>
-          <div className="nav-brand-icon" style={{ background: "#4F46E5", color: "#FFF", width: "36px", height: "36px", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "800" }}>IQ</div>
-          <div>
-            <h2 style={{ fontSize: "18px", fontWeight: "800", color: "#0F172A" }}>ResumeIQ Admin</h2>
-            <p style={{ fontSize: "11px", color: "#64748B" }}>Recruiter & HR Admin Portal</p>
-          </div>
-        </div>
-
-        <div className="navbar-right" style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-          <div className="admin-profile-dropdown" style={{ display: "flex", alignItems: "center", gap: "8px", background: "#F8FAFC", padding: "6px 14px", borderRadius: "20px", border: "1px solid #E2E8F0" }}>
-            <div className="admin-avatar-small" style={{ width: "32px", height: "32px", background: "#4F46E5", color: "#FFF", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "800", fontSize: "12px" }}>{adminInitials}</div>
-            <span className="admin-name-text" style={{ fontSize: "14px", fontWeight: "700" }}>{adminName}</span>
-          </div>
-        </div>
-      </nav>
+      {/* REUSABLE ADMIN NAVBAR */}
+      <AdminNavbar />
 
       {/* MAIN CONTAINER */}
       <main className="details-content-container">

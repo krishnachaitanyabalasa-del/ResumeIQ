@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { authApi } from "../api/apiService";
+import UserNavbar from "../components/UserNavbar";
 import "./ApplyDrive.css";
 import {
-  FaFileAlt,
-  FaBell,
   FaArrowLeft,
   FaCloudUploadAlt,
   FaFilePdf,
   FaTrashAlt,
   FaPlus,
   FaPaperPlane,
-  FaCheck,
-  FaBuilding,
-  FaChevronDown
+  FaCheck
 } from "react-icons/fa";
 
 export default function ApplyDrive() {
@@ -143,25 +140,21 @@ export default function ApplyDrive() {
     setSubmitting(true);
 
     try {
-      // 1. Formatted Education string
       const educationText = educationList
         .filter((e) => e.degree || e.institute)
         .map((e) => `${e.degree} at ${e.institute} (${e.passingYear}) - CGPA: ${e.cgpa}`)
         .join("; ");
 
-      // 2. Formatted Experience string
       const experienceText = experienceList
         .filter((x) => x.companyName || x.role)
         .map((x) => `${x.role} at ${x.companyName} (${x.startDate} to ${x.currentlyWorking ? "Present" : x.endDate})`)
         .join("; ");
 
-      // 3. Formatted Projects string
       const projectsText = projectsList
         .filter((p) => p.projectTitle)
         .map((p) => `${p.projectTitle} [${p.technologies}] - ${p.projectLink}`)
         .join("; ");
 
-      // 4. Construct FormData
       const formData = new FormData();
       if (resumeFile) {
         formData.append("file", resumeFile);
@@ -178,7 +171,6 @@ export default function ApplyDrive() {
       formData.append("summary", summary);
       formData.append("achievements", achievementsInput);
 
-      // Upload Resume & Save Details
       const resumeRes = await authApi.uploadResume(formData);
       const savedResume = resumeRes.data;
 
@@ -186,7 +178,6 @@ export default function ApplyDrive() {
         throw new Error("Failed to process application details.");
       }
 
-      // Submit Application & Score with AI / Deterministic Fallback Engine
       await authApi.applyToDrive({
         applicantId: Number(userId || 1),
         driveId: Number(driveId),
@@ -217,31 +208,8 @@ export default function ApplyDrive() {
 
   return (
     <div className="apply-drive-page">
-      {/* TOP NAVBAR */}
-      <nav className="apply-navbar">
-        <div className="apply-nav-left" onClick={() => navigate("/")}>
-          <div className="apply-brand-icon">
-            <FaFileAlt />
-          </div>
-          <div className="apply-brand-text">
-            <h2>ResumeIQ</h2>
-            <p>Find Best Opportunities. Apply. Get Matched.</p>
-          </div>
-        </div>
-
-        <div className="user-nav-right" style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-          <div className="notification-btn" style={{ position: "relative" }}>
-            <FaBell />
-            <span className="notification-badge" style={{ position: "absolute", top: "-6px", right: "-6px", background: "#EF4444", color: "#FFF", borderRadius: "50%", padding: "2px 6px", fontSize: "10px", fontWeight: "800" }}>3</span>
-          </div>
-
-          <div className="user-profile-dropdown" style={{ display: "flex", alignItems: "center", gap: "8px", background: "#F8FAFC", padding: "6px 14px", borderRadius: "30px", border: "1px solid #E2E8F0" }}>
-            <div className="user-avatar-small" style={{ width: "32px", height: "32px", background: "#4F46E5", color: "#FFF", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "800", fontSize: "12px" }}>U</div>
-            <span className="user-name-text" style={{ fontSize: "14px", fontWeight: "700", color: "#0F172A" }}>{userName || "User"}</span>
-            <FaChevronDown style={{ fontSize: "10px", color: "#94A3B8" }} />
-          </div>
-        </div>
-      </nav>
+      {/* REUSABLE USER NAVBAR */}
+      <UserNavbar />
 
       <main className="apply-container">
         {/* BREADCRUMB */}

@@ -1,0 +1,180 @@
+.user-global-navbar {
+  height: 76px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #E2E8F0;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.user-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.user-nav-brand-icon {
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-size: 20px;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+}
+
+.user-nav-brand-text h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1E1B4B;
+  letter-spacing: -0.5px;
+  margin: 0;
+}
+
+.user-nav-brand-text p {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748B;
+  margin: 2px 0 0 0;
+}
+
+.user-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.user-nav-links-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-link-item {
+  font-size: 14px;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  padding: 6px 4px;
+  transition: color 0.2s ease;
+  position: relative;
+}
+
+.nav-link-item:hover {
+  color: #4F46E5;
+}
+
+.nav-link-item.active {
+  color: #4F46E5;
+  font-weight: 800;
+}
+
+.nav-link-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #4F46E5;
+  border-radius: 2px;
+}
+
+.notification-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #F1F5F9;
+  border: 1px solid #E2E8F0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #475569;
+  font-size: 15px;
+  position: relative;
+  cursor: pointer;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #EF4444;
+  color: #FFFFFF;
+  font-size: 10px;
+  font-weight: 800;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #FFFFFF;
+}
+
+.user-profile-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #F8FAFC;
+  padding: 6px 14px 6px 8px;
+  border-radius: 30px;
+  border: 1px solid #E2E8F0;
+}
+
+.user-avatar-circle {
+  width: 32px;
+  height: 32px;
+  background: #4F46E5;
+  color: #FFFFFF;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.user-name-text {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+/* RED LOGOUT BUTTON */
+.user-logout-btn {
+  background: #FEF2F2;
+  border: 1px solid #FCA5A5;
+  color: #DC2626;
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.user-logout-btn:hover {
+  background: #EF4444;
+  color: #FFFFFF;
+  border-color: #EF4444;
+}
+
+.user-logout-btn:hover .logout-red-icon {
+  color: #FFFFFF !important;
+}
+
+.logout-red-icon {
+  color: #EF4444;
+  font-size: 15px;
+}

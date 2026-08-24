@@ -1,24 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { authApi } from "../api/apiService";
+import UserNavbar from "../components/UserNavbar";
 import "./UserDriveDetails.css";
 import {
   FaFileAlt,
-  FaBell,
   FaArrowLeft,
   FaBriefcase,
   FaMapMarkerAlt,
   FaCalendarAlt,
   FaCheck,
-  FaTimes,
   FaGraduationCap,
   FaUserCheck,
-  FaBuilding,
   FaClock,
-  FaCloudUploadAlt,
   FaInfoCircle,
-  FaPaperPlane,
-  FaChevronDown
+  FaPaperPlane
 } from "react-icons/fa";
 
 export default function UserDriveDetails() {
@@ -35,17 +31,6 @@ export default function UserDriveDetails() {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
   const [isApplied, setIsApplied] = useState(false);
-
-  // Get Initials
-  const getInitials = (name) => {
-    if (!name) return "U";
-    const parts = name.trim().split(" ");
-    return parts.length >= 2
-      ? (parts[0][0] + parts[1][0]).toUpperCase()
-      : name.slice(0, 2).toUpperCase();
-  };
-
-  const userInitials = getInitials(userName);
 
   // Helper to split string into array items
   const parseListItems = (text) => {
@@ -99,6 +84,7 @@ export default function UserDriveDetails() {
   if (loading) {
     return (
       <div className="user-drive-details-page">
+        <UserNavbar />
         <div style={{ textAlign: "center", padding: "80px", color: "#64748B" }}>
           Loading hiring drive details from backend...
         </div>
@@ -109,6 +95,7 @@ export default function UserDriveDetails() {
   if (errorMsg || !drive) {
     return (
       <div className="user-drive-details-page">
+        <UserNavbar />
         <div className="user-details-container">
           <button className="back-to-drives-btn" onClick={() => navigate("/user-home")}>
             <FaArrowLeft /> Back to Drives
@@ -138,32 +125,8 @@ export default function UserDriveDetails() {
 
   return (
     <div className="user-drive-details-page">
-      {/* TOP NAVBAR */}
-      <nav className="user-drive-navbar">
-        <div className="user-nav-left" onClick={() => navigate("/")}>
-          <div className="user-nav-brand-icon">
-            <FaFileAlt />
-          </div>
-          <div className="user-nav-brand-text">
-            <h2>ResumeIQ</h2>
-            <p>Find Best Opportunities. Apply. Get Matched.</p>
-          </div>
-        </div>
-
-        <div className="user-nav-right">
-          <div className="notification-btn">
-            <FaBell />
-            <span className="notification-badge">3</span>
-          </div>
-
-          <div className="user-profile-badge" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <div className="user-avatar" style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#4F46E5", color: "#FFF", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "800", fontSize: "12px" }}>
-              {userInitials}
-            </div>
-            <span style={{ fontWeight: "700", color: "#0F172A", fontSize: "14px" }}>{userName}</span>
-          </div>
-        </div>
-      </nav>
+      {/* REUSABLE USER NAVBAR */}
+      <UserNavbar />
 
       <main className="user-details-container">
         {/* BREADCRUMBS ROW */}
