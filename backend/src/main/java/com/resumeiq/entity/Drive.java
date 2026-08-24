@@ -20,6 +20,7 @@ public class Drive {
 
     private String companyName;
 
+    @Column(columnDefinition = "LONGTEXT")
     private String companyLogo;
 
     private String driveName;

@@ -38,6 +38,9 @@ public class DriveController {
             @RequestParam(required = false)
             String companyLogo,
 
+            @RequestParam(required = false)
+            MultipartFile companyLogoFile,
+
             @RequestParam String driveName,
 
             @RequestParam String role,
@@ -71,6 +74,8 @@ public class DriveController {
                             companyName,
 
                             companyLogo,
+
+                            companyLogoFile,
 
                             driveName,
 

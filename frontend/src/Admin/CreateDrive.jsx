@@ -98,6 +98,10 @@ export default function CreateDrive() {
       formData.append("experience", form.experience);
       formData.append("description", form.description);
 
+      if (companyLogoFile) {
+        formData.append("companyLogoFile", companyLogoFile);
+      }
+
       if (form.jdType === "text") {
         formData.append("jdText", form.jdText);
       } else if (form.jdType === "pdf" && jdFile) {

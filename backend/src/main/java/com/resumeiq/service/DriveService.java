@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +60,7 @@ public class DriveService {
     public Drive createDrive(
             String companyName,
             String companyLogo,
+            MultipartFile companyLogoFile,
             String driveName,
             String role,
             String location,
@@ -92,6 +94,23 @@ public class DriveService {
         System.out.println(
                 "Has JD file: " + hasFile
         );
+
+        // --------------------------------------------------------
+        // PROCESS COMPANY LOGO
+        // --------------------------------------------------------
+
+        String finalCompanyLogo = companyLogo;
+
+        if (companyLogoFile != null && !companyLogoFile.isEmpty()) {
+            byte[] logoBytes = companyLogoFile.getBytes();
+            String base64Logo = Base64.getEncoder().encodeToString(logoBytes);
+            String contentType = companyLogoFile.getContentType();
+            if (contentType == null || contentType.isBlank()) {
+                contentType = "image/png";
+            }
+            finalCompanyLogo = "data:" + contentType + ";base64," + base64Logo;
+            System.out.println("Converted company logo file to Base64 data URL. Length: " + finalCompanyLogo.length());
+        }
 
         // --------------------------------------------------------
         // VALIDATE JD
@@ -177,7 +196,7 @@ public class DriveService {
 
                         .companyName(companyName)
 
-                        .companyLogo(companyLogo)
+                        .companyLogo(finalCompanyLogo)
 
                         .driveName(driveName)
 
@@ -469,9 +488,6 @@ public class DriveService {
                     driveDetails.getStatus()
             );
         }
-
-        // ❌ DO NOT update createdByEmail here.
-        // The owner of a drive should never change.
 
         return driveRepository.save(
                 existingDrive
