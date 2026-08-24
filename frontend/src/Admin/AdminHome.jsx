@@ -43,7 +43,8 @@ export default function AdminHome() {
   const [drives, setDrives] = useState([]);
   const [stats, setStats] = useState({
     totalDrives: 0,
-    activeDrives: 0,
+    openDrives: 0,
+    closedDrives: 0,
     upcomingDrives: 0,
     completedDrives: 0
   });
@@ -77,12 +78,7 @@ export default function AdminHome() {
       }
 
       if (statsRes && statsRes.data) {
-        setStats({
-          totalDrives: statsRes.data.totalDrives || 0,
-          activeDrives: statsRes.data.openDrives || statsRes.data.activeDrives || 0,
-          upcomingDrives: statsRes.data.closedDrives || statsRes.data.upcomingDrives || 0,
-          completedDrives: statsRes.data.completedDrives || 0
-        });
+        setStats(statsRes.data);
       }
     } catch (err) {
       console.error("Error fetching admin dashboard data:", err);
@@ -117,6 +113,20 @@ export default function AdminHome() {
 
     return matchSearch && matchStatus && matchLocation;
   });
+
+  // Calculate live stat cards dynamically from drives array for instant accuracy
+  const totalDrivesCount = drives.length || stats.totalDrives || 0;
+  const activeDrivesCount = drives.length > 0
+    ? drives.filter((d) => (d.status || "").toUpperCase() === "OPEN" || (d.status || "").toUpperCase() === "ACTIVE").length
+    : (stats.openDrives || 0);
+
+  const closedUpcomingCount = drives.length > 0
+    ? drives.filter((d) => (d.status || "").toUpperCase() === "UPCOMING" || (d.status || "").toUpperCase() === "CLOSED").length
+    : ((stats.closedDrives || 0) + (stats.upcomingDrives || 0));
+
+  const completedDrivesCount = drives.length > 0
+    ? drives.filter((d) => (d.status || "").toUpperCase() === "COMPLETED").length
+    : (stats.completedDrives || 0);
 
   return (
     <div className="admin-dashboard">
@@ -171,7 +181,7 @@ export default function AdminHome() {
             </div>
             <div className="stat-info">
               <label>Total Drives</label>
-              <div className="stat-value">{stats.totalDrives}</div>
+              <div className="stat-value">{totalDrivesCount}</div>
               <span className="stat-subtitle">All time</span>
             </div>
           </div>
@@ -182,7 +192,7 @@ export default function AdminHome() {
             </div>
             <div className="stat-info">
               <label>Active Drives</label>
-              <div className="stat-value">{stats.activeDrives}</div>
+              <div className="stat-value">{activeDrivesCount}</div>
               <span className="stat-subtitle">Currently active</span>
             </div>
           </div>
@@ -193,7 +203,7 @@ export default function AdminHome() {
             </div>
             <div className="stat-info">
               <label>Closed / Upcoming</label>
-              <div className="stat-value">{stats.upcomingDrives}</div>
+              <div className="stat-value">{closedUpcomingCount}</div>
               <span className="stat-subtitle">Starting / Closed</span>
             </div>
           </div>
@@ -204,7 +214,7 @@ export default function AdminHome() {
             </div>
             <div className="stat-info">
               <label>Completed Drives</label>
-              <div className="stat-value">{stats.completedDrives}</div>
+              <div className="stat-value">{completedDrivesCount}</div>
               <span className="stat-subtitle">Completed</span>
             </div>
           </div>
@@ -243,6 +253,7 @@ export default function AdminHome() {
             >
               <option value="ALL">All Status</option>
               <option value="OPEN">Open / Active</option>
+              <option value="UPCOMING">Upcoming</option>
               <option value="CLOSED">Closed</option>
               <option value="COMPLETED">Completed</option>
             </select>

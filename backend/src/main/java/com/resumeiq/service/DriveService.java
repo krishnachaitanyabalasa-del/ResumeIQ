@@ -313,6 +313,13 @@ public class DriveService {
                                 "CLOSED"
                         );
 
+        long upcoming =
+                driveRepository
+                        .countByCreatedByEmailAndStatus(
+                                email,
+                                "UPCOMING"
+                        );
+
         long completed =
                 driveRepository
                         .countByCreatedByEmailAndStatus(
@@ -324,6 +331,8 @@ public class DriveService {
                 "totalDrives", total,
                 "openDrives", open,
                 "closedDrives", closed,
+                "upcomingDrives", upcoming,
+                "closedAndUpcoming", closed + upcoming,
                 "completedDrives", completed
         );
     }
