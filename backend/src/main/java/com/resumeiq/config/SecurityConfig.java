@@ -64,7 +64,7 @@ public class SecurityConfig {
                                 "/api/applications/*"
                         ).hasAnyAuthority("APPLICANT", "ADMIN")
 
-                        .requestMatchers(HttpMethod.GET, "/api/drives/*").hasAnyAuthority("APPLICANT", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/drives", "/api/drives/**").hasAnyAuthority("APPLICANT", "ADMIN")
 
                         // ==========================================
                         // 3. ADMIN-ONLY ENDPOINTS
@@ -77,7 +77,6 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.POST, "/api/drives").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/drives/*").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/drives").hasAuthority("ADMIN")
 
                         // ==========================================
                         // 4. DEFAULT: ALL OTHER REQUESTS REQUIRE AUTH

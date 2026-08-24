@@ -78,9 +78,22 @@ export default function UserHomePage() {
         userId ? authApi.getApplicationsByUser(userId) : Promise.resolve({ data: [] })
       ]);
 
+      let fetchedDrives = [];
       if (drivesRes.status === "fulfilled" && Array.isArray(drivesRes.value.data)) {
-        setDrives(drivesRes.value.data);
+        fetchedDrives = drivesRes.value.data;
+      } else {
+        // Fallback to open drives endpoint if getAllDrives endpoint was restricted
+        try {
+          const openRes = await authApi.getOpenDrives();
+          if (openRes && Array.isArray(openRes.data)) {
+            fetchedDrives = openRes.data;
+          }
+        } catch (openErr) {
+          console.error("Open drives fallback error:", openErr);
+        }
       }
+
+      setDrives(fetchedDrives);
 
       if (appsRes.status === "fulfilled" && Array.isArray(appsRes.value.data)) {
         setUserApplications(appsRes.value.data);
@@ -279,7 +292,6 @@ export default function UserHomePage() {
                   <th>Location</th>
                   <th>Experience</th>
                   <th>Posted On</th>
-                  <th>Last Date</th>
                   <th>Status</th>
                   <th>Action</th>
                 </tr>
@@ -287,13 +299,13 @@ export default function UserHomePage() {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="8" style={{ textAlign: "center", padding: "36px", color: "#64748B" }}>
+                    <td colSpan="7" style={{ textAlign: "center", padding: "36px", color: "#64748B" }}>
                       Loading hiring drives from backend...
                     </td>
                   </tr>
                 ) : filteredDrives.length === 0 ? (
                   <tr>
-                    <td colSpan="8" style={{ textAlign: "center", padding: "36px", color: "#94A3B8" }}>
+                    <td colSpan="7" style={{ textAlign: "center", padding: "36px", color: "#94A3B8" }}>
                       {activeTab === "NOT_APPLIED"
                         ? "Great job! You have applied to all currently available hiring drives."
                         : "No matching hiring drives found."}
@@ -361,13 +373,6 @@ export default function UserHomePage() {
                         <td>
                           <div className="created-date">{createdDateStr}</div>
                           <span className="created-by">by Admin</span>
-                        </td>
-
-                        {/* LAST DATE */}
-                        <td>
-                          <div className="created-date" style={{ color: "#475569" }}>
-                            14 Days Left
-                          </div>
                         </td>
 
                         {/* STATUS */}
