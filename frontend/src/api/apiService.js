@@ -44,6 +44,12 @@ export const authApi = {
   getApplicationsByUser: (userId) => axiosInstance.get(`/applications/user/${userId}`),
 
   applyToDrive: (applicationData) => axiosInstance.post("/applications", applicationData),
+
+  // Resume Upload API
+  uploadResume: (formData) =>
+    axiosInstance.post("/resumes/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
 };
 
 export default authApi;

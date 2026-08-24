@@ -393,13 +393,13 @@ export default function UserHomePage() {
                         {/* ACTION */}
                         <td>
                           {isApplied ? (
-                            <span className="action-applied-badge">
+                            <span className="action-applied-badge" onClick={() => navigate(`/user/drives/${drive.id}`)} style={{ cursor: "pointer" }}>
                               <FaCheck /> Applied
                             </span>
                           ) : (
                             <button
                               className="action-view-btn"
-                              onClick={() => alert(`View details & apply to ${drive.driveName}`)}
+                              onClick={() => navigate(`/user/drives/${drive.id}`)}
                             >
                               View Details <FaEye />
                             </button>

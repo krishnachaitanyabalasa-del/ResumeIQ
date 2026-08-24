@@ -1,0 +1,478 @@
+.user-drive-details-page {
+  min-height: 100vh;
+  background-color: #F8FAFC;
+  color: #0F172A;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  padding-bottom: 60px;
+}
+
+/* TOP NAVBAR */
+.user-drive-navbar {
+  height: 76px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #E2E8F0;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.user-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.user-nav-brand-icon {
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-size: 20px;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+}
+
+.user-nav-brand-text h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1E1B4B;
+  letter-spacing: -0.5px;
+}
+
+.user-nav-brand-text p {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748B;
+}
+
+.user-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* CONTAINER */
+.user-details-container {
+  max-width: 1600px;
+  width: 95%;
+  margin: 28px auto;
+  padding: 0 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* BREADCRUMB BAR */
+.breadcrumb-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.back-to-drives-btn {
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  color: #334155;
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-to-drives-btn:hover {
+  background: #F1F5F9;
+  color: #0F172A;
+}
+
+.breadcrumb-trail {
+  font-size: 13px;
+  color: #64748B;
+  font-weight: 600;
+}
+
+.breadcrumb-trail span {
+  color: #0F172A;
+  font-weight: 800;
+}
+
+/* DRIVE BANNER CARD */
+.drive-banner-card {
+  background: #FFFFFF;
+  border-radius: 24px;
+  padding: 32px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+}
+
+.banner-left-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.banner-company-logo {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 800;
+  color: #FFFFFF;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.banner-title-group h1 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0F172A;
+  letter-spacing: -0.5px;
+}
+
+.company-header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.company-header-row h3 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.drive-meta-subtitle {
+  font-size: 13px;
+  color: #64748B;
+  margin-top: 6px;
+}
+
+/* BANNER RIGHT ACTION */
+.banner-right-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.apply-primary-btn {
+  background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);
+  color: #FFFFFF;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.3);
+  transition: all 0.2s ease;
+}
+
+.apply-primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+}
+
+.applied-primary-badge {
+  background: #DCFCE7;
+  color: #15803D;
+  border: 1px solid #86EFAC;
+  padding: 12px 28px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.apply-status-text {
+  font-size: 12px;
+  color: #64748B;
+  font-weight: 600;
+}
+
+/* 5 METRIC CARDS ROW */
+.metrics-cards-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+.metric-card-item {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 20px 24px;
+  border: 1px solid #E2E8F0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+}
+
+.metric-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #EEF2FF;
+  color: #4F46E5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.metric-details-text span {
+  font-size: 12px;
+  color: #64748B;
+  font-weight: 600;
+  display: block;
+}
+
+.metric-details-text h4 {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0F172A;
+  margin-top: 2px;
+}
+
+.metric-subtag {
+  font-size: 12px;
+  color: #64748B;
+  margin-top: 2px;
+}
+
+/* 2-COLUMN BOTTOM LAYOUT */
+.details-content-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
+  width: 100%;
+}
+
+.section-detail-card {
+  background: #FFFFFF;
+  border-radius: 24px;
+  padding: 32px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+  width: 100%;
+}
+
+.section-title-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.section-title-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: #EEF2FF;
+  color: #4F46E5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.section-title-bar h2 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+/* JOB DESCRIPTION CONTENT */
+.jd-body-text {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #334155;
+  margin-bottom: 24px;
+}
+
+.responsibilities-heading {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 14px;
+}
+
+.responsibilities-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.responsibilities-list li {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #334155;
+  position: relative;
+  padding-left: 24px;
+}
+
+.responsibilities-list li::before {
+  content: '•';
+  position: absolute;
+  left: 6px;
+  color: #4F46E5;
+  font-size: 18px;
+}
+
+/* REQUIREMENTS TABLE */
+.requirements-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+}
+
+.requirements-table tr td {
+  padding: 12px 16px;
+  background: #F8FAFC;
+  font-size: 13px;
+}
+
+.requirements-table tr td:first-child {
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+  font-weight: 700;
+  color: #475569;
+  width: 35%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.requirements-table tr td:last-child {
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  color: #0F172A;
+  font-weight: 600;
+}
+
+.req-row-icon {
+  color: #64748B;
+  font-size: 14px;
+}
+
+/* ABOUT COMPANY BOX */
+.about-company-box {
+  background: #EEF2FF;
+  border: 1px solid #C7D2FE;
+  border-radius: 18px;
+  padding: 20px;
+  margin-top: 24px;
+}
+
+.about-company-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #3730A3;
+  margin-bottom: 8px;
+}
+
+.about-company-desc {
+  font-size: 13px;
+  color: #4338CA;
+  line-height: 1.6;
+}
+
+/* MODAL OVERLAY FOR APPLY */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.apply-modal-card {
+  background: #FFFFFF;
+  border-radius: 24px;
+  padding: 36px;
+  max-width: 520px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.modal-header h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  color: #64748B;
+  cursor: pointer;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 1024px) {
+  .details-content-grid {
+    grid-template-columns: 1fr;
+  }
+  .drive-banner-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .banner-right-action {
+    align-items: flex-start;
+    width: 100%;
+  }
+  .user-details-container {
+    padding: 0 20px;
+    width: 100%;
+  }
+}
