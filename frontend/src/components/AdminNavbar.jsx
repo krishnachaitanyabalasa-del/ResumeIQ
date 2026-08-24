@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { FaFileAlt, FaBell, FaSignOutAlt } from "react-icons/fa";
+import { FaFileAlt, FaSignOutAlt } from "react-icons/fa";
 import "./AdminNavbar.css";
 
 export default function AdminNavbar() {
@@ -38,11 +38,6 @@ export default function AdminNavbar() {
 
       {/* ADMIN PROFILE & RED LOGOUT BUTTON */}
       <div className="admin-nav-right">
-        <div className="notification-btn" title="Notifications">
-          <FaBell />
-          <span className="notification-badge">3</span>
-        </div>
-
         <div className="admin-profile-badge">
           <div className="admin-avatar-circle">{adminInitials}</div>
           <span className="admin-name-text">{adminName}</span>

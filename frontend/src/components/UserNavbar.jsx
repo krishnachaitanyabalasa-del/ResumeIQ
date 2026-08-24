@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { FaFileAlt, FaBell, FaSignOutAlt, FaChevronDown } from "react-icons/fa";
+import { FaFileAlt, FaSignOutAlt } from "react-icons/fa";
 import "./UserNavbar.css";
 
 export default function UserNavbar({ activeTab, setActiveTab }) {
@@ -64,11 +64,6 @@ export default function UserNavbar({ activeTab, setActiveTab }) {
           >
             My Applications
           </span>
-        </div>
-
-        <div className="notification-btn" title="Notifications">
-          <FaBell />
-          <span className="notification-badge">3</span>
         </div>
 
         <div className="user-profile-badge">
