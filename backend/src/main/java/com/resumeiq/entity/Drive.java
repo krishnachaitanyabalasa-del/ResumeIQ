@@ -2,6 +2,7 @@ package com.resumeiq.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -32,10 +33,36 @@ public class Drive {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    /*
+     * Complete Job Description text.
+     * If HR uploads a PDF, the extracted PDF text
+     * will be stored here.
+     */
     @Column(columnDefinition = "TEXT")
     private String jdText;
 
+    /*
+     * Location/path of uploaded JD PDF.
+     */
     private String jdFileUrl;
+
+    /*
+     * Structured requirements extracted from the JD.
+     */
+    @Column(columnDefinition = "TEXT")
+    private String requiredSkills;
+
+    @Column(columnDefinition = "TEXT")
+    private String requiredExperience;
+
+    @Column(columnDefinition = "TEXT")
+    private String requiredEducation;
+
+    @Column(columnDefinition = "TEXT")
+    private String requiredResponsibilities;
+
+    @Column(columnDefinition = "TEXT")
+    private String requiredQualifications;
 
     private String status;
 
@@ -44,7 +71,8 @@ public class Drive {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
-        if (this.status == null) {
+
+        if (this.status == null || this.status.isBlank()) {
             this.status = "OPEN";
         }
     }
