@@ -29,6 +29,13 @@ public class Resume {
     private String parsedText;
 
     @Column(columnDefinition = "TEXT")
+    private String name;
+
+    private String email;
+
+    private String phone;
+
+    @Column(columnDefinition = "TEXT")
     private String skills;
 
     @Column(columnDefinition = "TEXT")
@@ -37,7 +44,19 @@ public class Resume {
     @Column(columnDefinition = "TEXT")
     private String experience;
 
+    @Column(columnDefinition = "TEXT")
+    private String projects;
+
+    @Column(columnDefinition = "TEXT")
+    private String certifications;
+
+    @Column(columnDefinition = "TEXT")
+    private String summary;
+
     private LocalDateTime uploadedAt;
+
+    @Column(columnDefinition = "TEXT")
+    private String achievements;
 
     @PrePersist
     protected void onCreate() {
