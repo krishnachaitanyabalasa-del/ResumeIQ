@@ -1,75 +1,65 @@
 package com.resumeiq.service;
 
-import com.openai.client.OpenAIClient;
-import com.openai.client.okhttp.OpenAIOkHttpClient;
-import com.openai.models.ChatModel;
-import com.openai.models.responses.Response;
-import com.openai.models.responses.ResponseCreateParams;
+import com.google.genai.Client;
+import com.google.genai.types.Content;
+import com.google.genai.types.GenerateContentResponse;
+import com.google.genai.types.Part;
 import org.springframework.stereotype.Service;
 
 @Service
 public class OpenAIService {
-    String key = System.getenv("OPENAI_API_KEY");
-    private final OpenAIClient client;
+
+    private final Client client;
 
     public OpenAIService() {
-        this.client = OpenAIOkHttpClient.fromEnv();
+        this.client = Client.builder()
+                .apiKey(System.getenv("GOOGLE_API_KEY"))
+                .build();
     }
 
     public String extractResumeData(String resumeText) {
 
         String prompt = """
-                You are an expert resume parser.
+            Analyze the following resume and extract the important information.
 
-                Analyze the following resume and extract:
+            Return:
+            1. Candidate name
+            2. Email
+            3. Phone number
+            4. Skills
+            5. Education
+            6. Work experience
+            7. Projects
+            8. Certifications
+            9. Overall resume summary
 
-                1. Skills
-                2. Education
-                3. Experience
+            Resume:
+            """ + resumeText;
 
-                Return ONLY valid JSON.
-
-                Do NOT return markdown.
-                Do NOT return ```json.
-                Do NOT add explanations.
-
-                Use exactly this format:
-
-                {
-                  "skills": "Java, Spring Boot, React, SQL",
-                  "education": "B.Tech in Computer Science",
-                  "experience": "Software Developer Intern - 6 months"
-                }
-
-                If a section is not available in the resume,
-                or retrieve the skills from the projects mentioned.
-                if both not present return an empty string for that field 
-
-                RESUME:
-
-                %s
-                """.formatted(resumeText);
-
-        ResponseCreateParams params =
-                ResponseCreateParams.builder()
-                        .model(ChatModel.GPT_5_2)
-                        .input(prompt)
-                        .build();
-
-        Response response =
-                client.responses().create(params);
-
-        return response.output()
-                .stream()
-                .flatMap(item -> item.message().stream())
-                .flatMap(message -> message.content().stream())
-                .flatMap(content -> content.outputText().stream())
-                .map(outputText -> outputText.text())
-                .findFirst()
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "OpenAI returned no response"
-                        )
+        GenerateContentResponse response =
+                client.models.generateContent(
+                        "gemini-3.7-flash",
+                        prompt,
+                        null
                 );
+
+        return response.text();
+    }
+
+    public String analyzeResume(byte[] pdfBytes, String prompt) {
+
+        Content content = Content.fromParts(
+                Part.fromBytes(pdfBytes, "application/pdf"),
+                Part.fromText(prompt)
+        );
+
+        GenerateContentResponse response =
+                client.models.generateContent(
+                        "gemini-3.7-flash",
+                        content,
+                        null
+                );
+
+        return response.text();
     }
 }

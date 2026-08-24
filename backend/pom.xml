@@ -75,9 +75,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.openai</groupId>
-            <artifactId>openai-java</artifactId>
-            <version>4.43.0</version>
+            <groupId>com.google.genai</groupId>
+            <artifactId>google-genai</artifactId>
+            <version>1.56.0</version>
         </dependency>
 
         <dependency>

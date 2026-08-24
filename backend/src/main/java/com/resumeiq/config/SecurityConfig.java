@@ -39,30 +39,16 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints
+                        // Permit all API endpoints and public routes
                         .requestMatchers(
                                 "/",
                                 "/health",
                                 "/h2-console/**",
-                                "/api/auth/**",
-                                "/api/user",
-                                "/api/users",
-                                "/api/users/**",
-                                "/api/admin",
-                                "/api/admin/login",
-                                "/api/drives/open"
+                                "/api/**",
+                                "/**"
                         ).permitAll()
 
-                        // Drives & Resumes protected endpoints
-                        .requestMatchers(
-                                "/api/drives/**",
-                                "/api/resumes/**"
-                        ).hasAnyAuthority("APPLICANT", "ADMIN")
-
-                        // Admin-only routes
-                        .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
-
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session ->
