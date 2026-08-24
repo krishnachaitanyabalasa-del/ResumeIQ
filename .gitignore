@@ -1,6 +1,17 @@
 # Target folder
 target/
 **/target/
+node_modules/
+dist/
+
+# Environment and Secret files
+.env
+*.env
+.env.local
+
+# Candidate Resume uploads
+uploads/
+**/uploads/
 
 # IDE files
 .idea/

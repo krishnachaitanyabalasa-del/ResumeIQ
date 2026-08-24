@@ -8,7 +8,7 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: ResumeIQ
-      MYSQL_ROOT_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:-A1@CHAITu143}
+      MYSQL_ROOT_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:-changeit}
     ports:
       - "3306:3306"
     volumes:
@@ -26,7 +26,7 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/ResumeIQ?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME:-root}
-      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD:-A1@CHAITu143}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD:-changeit}
       # MULTI-API KEY ROTATION & QUOTA FAILOVER KEYS
       - GOOGLE_API_KEYS=${GOOGLE_API_KEYS:-}
       - GOOGLE_API_KEY1=${GOOGLE_API_KEY1:-}

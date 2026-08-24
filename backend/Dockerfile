@@ -27,11 +27,11 @@ COPY --from=builder /app/target/*.jar app.jar
 # Expose backend port
 EXPOSE 8080
 
-# Environment Variable Defaults
+# Environment Variable Defaults (Dynamic Overrides via Environment Variables)
 ENV SERVER_PORT=8080
 ENV SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/ResumeIQ?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
 ENV SPRING_DATASOURCE_USERNAME=root
-ENV SPRING_DATASOURCE_PASSWORD=A1@CHAITu143
+ENV SPRING_DATASOURCE_PASSWORD=""
 
 # Launch Spring Boot Application
 ENTRYPOINT ["java", "-jar", "app.jar"]
