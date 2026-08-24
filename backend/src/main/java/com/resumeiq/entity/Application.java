@@ -34,9 +34,9 @@ public class Application {
 
     private LocalDateTime appliedAt;
 
-    // =========================
-    // AI SCORING FIELDS
-    // =========================
+    // ==========================
+    // AI SCORE
+    // ==========================
 
     private Double score;
 
@@ -48,11 +48,19 @@ public class Application {
 
     private Double projectScore;
 
+    private Double relevanceScore;
+
     @Column(columnDefinition = "TEXT")
     private String matchedSkills;
 
     @Column(columnDefinition = "TEXT")
     private String missingSkills;
+
+    @Column(columnDefinition = "TEXT")
+    private String strengths;
+
+    @Column(columnDefinition = "TEXT")
+    private String weaknesses;
 
     @Column(columnDefinition = "TEXT")
     private String aiFeedback;

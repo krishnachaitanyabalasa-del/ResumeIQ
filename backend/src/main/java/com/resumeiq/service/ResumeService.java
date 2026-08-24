@@ -27,7 +27,7 @@ public class ResumeService {
 
     private final ResumeRepository resumeRepository;
     private final UserRepository userRepository;
-    private final OpenAIService openAIService;
+    private final GoogleApiService googleApiService;
     private final ObjectMapper objectMapper;
 
     @Value("${file.upload-dir:uploads/resumes}")
@@ -36,12 +36,12 @@ public class ResumeService {
     public ResumeService(
             ResumeRepository resumeRepository,
             UserRepository userRepository,
-            OpenAIService openAIService,
+            GoogleApiService googleApiService,
             ObjectMapper objectMapper
     ) {
         this.resumeRepository = resumeRepository;
         this.userRepository = userRepository;
-        this.openAIService = openAIService;
+        this.googleApiService = googleApiService;
         this.objectMapper = objectMapper;
     }
 
@@ -126,7 +126,7 @@ public class ResumeService {
         // -----------------------------------------------------
 
         String aiResponse =
-                openAIService.extractResumeData(parsedText);
+                googleApiService.extractResumeData(parsedText);
 
         // -----------------------------------------------------
         // 6. Convert OpenAI JSON response

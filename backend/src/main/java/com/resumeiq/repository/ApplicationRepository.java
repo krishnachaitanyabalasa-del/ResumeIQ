@@ -7,7 +7,12 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ApplicationRepository extends JpaRepository<Application, Long> {
+public interface ApplicationRepository
+        extends JpaRepository<Application, Long> {
+
     List<Application> findByDriveId(Long driveId);
+
     List<Application> findByApplicantId(Long applicantId);
+
+    List<Application> findByDriveIdOrderByScoreDesc(Long driveId);
 }
