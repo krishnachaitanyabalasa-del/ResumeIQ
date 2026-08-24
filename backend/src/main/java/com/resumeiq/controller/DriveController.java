@@ -1,9 +1,7 @@
 package com.resumeiq.controller;
 
 import com.resumeiq.entity.Drive;
-import com.resumeiq.entity.ScreeningResult;
 import com.resumeiq.service.DriveService;
-import com.resumeiq.service.ScreeningResultService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,9 +20,6 @@ public class DriveController {
 
     @Autowired
     private DriveService driveService;
-
-    @Autowired
-    private ScreeningResultService screeningResultService;
 
     // ============================================================
     // CREATE DRIVE
@@ -271,23 +266,5 @@ public class DriveController {
                             )
                     );
         }
-    }
-
-
-    // ============================================================
-    // GET SCREENING RESULTS FOR DRIVE
-    // ============================================================
-
-    @GetMapping("/{driveId}/results")
-    public ResponseEntity<List<ScreeningResult>> getResultsForDrive(
-            @PathVariable Long driveId
-    ) {
-
-        return ResponseEntity.ok(
-                screeningResultService
-                        .getResultsForDrive(
-                                driveId
-                        )
-        );
     }
 }
