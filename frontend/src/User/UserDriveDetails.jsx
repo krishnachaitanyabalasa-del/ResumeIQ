@@ -54,6 +54,15 @@ export default function UserDriveDetails() {
 
   const userInitials = getInitials(userName);
 
+  // Helper to split string into array items
+  const parseListItems = (text) => {
+    if (!text || typeof text !== "string") return [];
+    return text
+      .split(/[\n;]+/)
+      .map((item) => item.replace(/^[•\-\*]\s*/, "").trim())
+      .filter((item) => item.length > 0);
+  };
+
   // Fetch Drive Details & User Applications
   const fetchDriveDetails = async () => {
     setLoading(true);
@@ -148,7 +157,7 @@ export default function UserDriveDetails() {
     return (
       <div className="user-drive-details-page">
         <div style={{ textAlign: "center", padding: "80px", color: "#64748B" }}>
-          Loading drive details...
+          Loading hiring drive details from backend...
         </div>
       </div>
     );
@@ -169,16 +178,20 @@ export default function UserDriveDetails() {
     );
   }
 
-  const companyName = drive.companyName || "TechSolutions Inc.";
+  const companyName = drive.companyName || "Organization";
   const firstLetter = companyName.charAt(0).toUpperCase();
 
   const createdDateStr = drive.createdAt
     ? new Date(drive.createdAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
-    : "24 May 2024";
+    : "Recently Posted";
 
   const lastDateStr = drive.lastDate
     ? new Date(drive.lastDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
-    : "07 Jun 2024";
+    : "Open Until Filled";
+
+  const responsibilitiesList = parseListItems(
+    drive.requiredResponsibilities || drive.jdText || drive.description
+  );
 
   return (
     <div className="user-drive-details-page">
@@ -201,7 +214,7 @@ export default function UserDriveDetails() {
           </div>
 
           <div className="user-profile-badge" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <div className="user-avatar" style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#4F46E5", color: "#FFF", display: "flex", alignItems: "center", justifyCenter: "center", fontWeight: "800", fontSize: "12px" }}>
+            <div className="user-avatar" style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#4F46E5", color: "#FFF", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "800", fontSize: "12px" }}>
               {userInitials}
             </div>
             <span style={{ fontWeight: "700", color: "#0F172A", fontSize: "14px" }}>{userName}</span>
@@ -245,7 +258,7 @@ export default function UserDriveDetails() {
               <h1>{drive.driveName}</h1>
 
               <div className="drive-meta-subtitle">
-                Drive ID: <strong>JD-2024-001</strong> • Posted on {createdDateStr} by Recruiter Admin
+                Drive ID: <strong>JD-{drive.id}</strong> • Posted on {createdDateStr} by {drive.createdByEmail || "Recruiter Admin"}
               </div>
             </div>
           </div>
@@ -272,7 +285,7 @@ export default function UserDriveDetails() {
             </div>
             <div className="metric-details-text">
               <span>Role / Position</span>
-              <h4>{drive.role || "Java Developer"}</h4>
+              <h4>{drive.role}</h4>
               <div className="metric-subtag">{drive.employmentType || "Full-time"}</div>
             </div>
           </div>
@@ -283,8 +296,8 @@ export default function UserDriveDetails() {
             </div>
             <div className="metric-details-text">
               <span>Location</span>
-              <h4>{drive.location || "Bangalore, India"}</h4>
-              <div className="metric-subtag">On-site</div>
+              <h4>{drive.location}</h4>
+              <div className="metric-subtag">On-site / Hybrid</div>
             </div>
           </div>
 
@@ -294,7 +307,7 @@ export default function UserDriveDetails() {
             </div>
             <div className="metric-details-text">
               <span>Experience</span>
-              <h4>{drive.experience || "0 - 2 Years"}</h4>
+              <h4>{drive.experience || drive.requiredExperience || "As per JD"}</h4>
             </div>
           </div>
 
@@ -315,9 +328,6 @@ export default function UserDriveDetails() {
             <div className="metric-details-text">
               <span>Last Date to Apply</span>
               <h4>{lastDateStr}</h4>
-              <div className="metric-subtag" style={{ color: "#16A34A", fontWeight: "700" }}>
-                (14 days left)
-              </div>
             </div>
           </div>
         </div>
@@ -333,21 +343,20 @@ export default function UserDriveDetails() {
               <h2>Job Description</h2>
             </div>
 
-            <div className="jd-body-text">
-              {drive.description ||
-                "We are looking for enthusiastic and motivated Java Developers to join our engineering team. You will work on building scalable, high-performance applications and collaborate with cross-functional teams to deliver world-class products."}
+            <div className="jd-body-text" style={{ whiteSpace: "pre-line" }}>
+              {drive.jdText || drive.description || "No full description text specified."}
             </div>
 
-            <h3 className="responsibilities-heading">Key Responsibilities</h3>
-            <ul className="responsibilities-list">
-              <li>Design, develop and maintain robust Java-based applications.</li>
-              <li>Work with Spring Boot and related technologies for backend development.</li>
-              <li>Build and expose RESTful APIs and integrate with external systems.</li>
-              <li>Write clean, maintainable and well-tested code.</li>
-              <li>Collaborate with frontend and product teams to deliver end-to-end solutions.</li>
-              <li>Participate in code reviews and help improve system design and architecture.</li>
-              <li>Troubleshoot and resolve production issues.</li>
-            </ul>
+            {responsibilitiesList.length > 0 && (
+              <>
+                <h3 className="responsibilities-heading">Key Requirements & Responsibilities</h3>
+                <ul className="responsibilities-list">
+                  {responsibilitiesList.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+              </>
+            )}
           </div>
 
           {/* RIGHT COLUMN: REQUIREMENTS & ABOUT COMPANY */}
@@ -364,19 +373,19 @@ export default function UserDriveDetails() {
                 <tbody>
                   <tr>
                     <td><FaBriefcase className="req-row-icon" /> Required Skills</td>
-                    <td>{drive.requiredSkills || "Java, Spring Boot, Microservices, REST APIs"}</td>
+                    <td>{drive.requiredSkills || "Specified in Job Description"}</td>
                   </tr>
                   <tr>
-                    <td><FaBriefcase className="req-row-icon" /> Preferred Skills</td>
-                    <td>React, SQL, Docker, Kubernetes</td>
+                    <td><FaGraduationCap className="req-row-icon" /> Qualifications</td>
+                    <td>{drive.requiredQualifications || "As specified by company"}</td>
                   </tr>
                   <tr>
                     <td><FaGraduationCap className="req-row-icon" /> Education</td>
-                    <td>{drive.requiredEducation || "B.Tech / B.E. / BCA / MCA"}</td>
+                    <td>{drive.requiredEducation || "Relevant Bachelor's / Master's"}</td>
                   </tr>
                   <tr>
                     <td><FaUserCheck className="req-row-icon" /> Experience</td>
-                    <td>{drive.requiredExperience || drive.experience || "0 - 2 Years"}</td>
+                    <td>{drive.requiredExperience || drive.experience || "As per JD"}</td>
                   </tr>
                   <tr>
                     <td><FaBriefcase className="req-row-icon" /> Employment Type</td>
@@ -384,17 +393,17 @@ export default function UserDriveDetails() {
                   </tr>
                   <tr>
                     <td><FaMapMarkerAlt className="req-row-icon" /> Location</td>
-                    <td>{drive.location || "Bangalore, India"} (On-site)</td>
+                    <td>{drive.location}</td>
                   </tr>
                 </tbody>
               </table>
 
               <div className="about-company-box">
                 <div className="about-company-title">
-                  <FaInfoCircle /> About the Company
+                  <FaInfoCircle /> About {companyName}
                 </div>
                 <div className="about-company-desc">
-                  {companyName} is a global technology company building innovative software products that power businesses worldwide.
+                  {companyName} is actively accepting candidate applications for the {drive.role} position at {drive.location}.
                 </div>
               </div>
             </div>
