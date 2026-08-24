@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { authApi } from "../api/apiService";
 import "./RegisterUser.css";
 import "../pages/Login.css";
 import { FaUser, FaEnvelope, FaLock, FaArrowRight } from "react-icons/fa";
@@ -26,12 +26,7 @@ export default function RegisterUser() {
     setLoading(true);
 
     try {
-      await axios.post(
-        "http://localhost:8080/api/auth/register",
-        form,
-        { headers: { "Content-Type": "application/json" } }
-      );
-
+      await authApi.registerUser(form);
       setLoading(false);
       navigate("/login-user");
     } catch (error) {

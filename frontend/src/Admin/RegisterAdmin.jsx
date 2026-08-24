@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { authApi } from "../api/apiService";
 import "./RegisterAdmin.css";
 import "../User/RegisterUser.css";
 import "../pages/Login.css";
@@ -27,12 +27,7 @@ export default function RegisterAdmin() {
     setLoading(true);
 
     try {
-      await axios.post(
-        "http://localhost:8080/api/admin",
-        form,
-        { headers: { "Content-Type": "application/json" } }
-      );
-
+      await authApi.registerAdmin(form);
       setLoading(false);
       navigate("/login-admin");
     } catch (error) {

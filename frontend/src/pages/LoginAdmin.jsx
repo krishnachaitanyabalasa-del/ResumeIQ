@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { authApi } from "../api/apiService";
 import "./Login.css";
 import {
   FaEnvelope,
@@ -37,16 +37,10 @@ export default function LoginAdmin() {
     setLoading(true);
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/admin/login",
-        {
-          email: form.email,
-          password: form.password
-        },
-        {
-          headers: { "Content-Type": "application/json" }
-        }
-      );
+      const response = await authApi.loginAdmin({
+        email: form.email,
+        password: form.password
+      });
 
       const data = response.data;
       if (!data || !data.token) {
