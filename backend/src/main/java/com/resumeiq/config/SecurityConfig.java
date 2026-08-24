@@ -3,6 +3,7 @@ package com.resumeiq.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -39,16 +40,47 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .authorizeHttpRequests(auth -> auth
-                        // Permit all API endpoints and public routes
+                        // ==========================================
+                        // 1. PUBLIC ENDPOINTS (No Token Required)
+                        // ==========================================
                         .requestMatchers(
                                 "/",
                                 "/health",
                                 "/h2-console/**",
-                                "/api/**",
-                                "/**"
+                                "/api/auth/**",
+                                "/api/admin/login",
+                                "/api/drives/open"
                         ).permitAll()
 
-                        .anyRequest().permitAll()
+                        // ==========================================
+                        // 2. APPLICANT & SHARED ENDPOINTS
+                        // ==========================================
+                        .requestMatchers(
+                                "/api/resumes/**",
+                                "/api/applications",
+                                "/api/applications/user/**",
+                                "/api/applications/*"
+                        ).hasAnyAuthority("APPLICANT", "ADMIN")
+
+                        .requestMatchers(HttpMethod.GET, "/api/drives/*").hasAnyAuthority("APPLICANT", "ADMIN")
+
+                        // ==========================================
+                        // 3. ADMIN-ONLY ENDPOINTS
+                        // ==========================================
+                        .requestMatchers(
+                                "/api/admin/**",
+                                "/api/users/**",
+                                "/api/applications/drive/**"
+                        ).hasAuthority("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/api/drives").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/drives/*").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/drives").hasAuthority("ADMIN")
+
+                        // ==========================================
+                        // 4. DEFAULT: ALL OTHER REQUESTS REQUIRE AUTH
+                        // ==========================================
+                        .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session ->
