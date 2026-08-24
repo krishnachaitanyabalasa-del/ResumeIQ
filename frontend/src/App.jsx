@@ -8,6 +8,7 @@ import RegisterAdmin from "./Admin/RegisterAdmin";
 
 import UserHomePage from "./User/UserHomePage";
 import UserDriveDetails from "./User/UserDriveDetails";
+import ApplyDrive from "./User/ApplyDrive";
 import AdminHome from "./Admin/AdminHome";
 import CreateDrive from "./Admin/CreateDrive";
 import DriveDetails from "./Admin/DriveDetails";
@@ -27,6 +28,7 @@ export default function App() {
         {/* User / Applicant Routes */}
         <Route path="/user-home" element={<UserHomePage />} />
         <Route path="/user/drives/:driveId" element={<UserDriveDetails />} />
+        <Route path="/user/apply/:driveId" element={<ApplyDrive />} />
 
         {/* Recruiter / Admin Routes */}
         <Route path="/admin-home" element={<AdminHome />} />

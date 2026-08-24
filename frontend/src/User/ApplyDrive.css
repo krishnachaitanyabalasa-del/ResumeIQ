@@ -1,0 +1,364 @@
+.apply-drive-page {
+  min-height: 100vh;
+  background-color: #F8FAFC;
+  color: #0F172A;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  padding-bottom: 80px;
+}
+
+/* TOP NAVBAR */
+.apply-navbar {
+  height: 76px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #E2E8F0;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.apply-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.apply-brand-icon {
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-size: 20px;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+}
+
+.apply-brand-text h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1E1B4B;
+  letter-spacing: -0.5px;
+}
+
+.apply-brand-text p {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748B;
+}
+
+/* MAIN CONTAINER */
+.apply-container {
+  max-width: 1200px;
+  width: 92%;
+  margin: 28px auto;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* BREADCRUMB & HEADER */
+.apply-breadcrumb {
+  font-size: 13px;
+  color: #64748B;
+  font-weight: 600;
+}
+
+.apply-breadcrumb span {
+  color: #0F172A;
+  font-weight: 800;
+}
+
+.apply-header-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.back-circle-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.back-circle-btn:hover {
+  background: #F1F5F9;
+  color: #0F172A;
+}
+
+.apply-header-title h1 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0F172A;
+  letter-spacing: -0.5px;
+}
+
+.apply-header-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #64748B;
+  margin-top: 4px;
+}
+
+/* FORM SECTIONS CARD */
+.apply-section-card {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 28px 32px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+  width: 100%;
+}
+
+.apply-section-card h2 {
+  font-size: 17px;
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 4px;
+}
+
+.section-desc {
+  font-size: 12px;
+  color: #64748B;
+  margin-bottom: 20px;
+}
+
+/* DROPZONE */
+.apply-resume-dropzone {
+  border: 2px dashed #C7D2FE;
+  background: #F8FAFC;
+  border-radius: 16px;
+  padding: 32px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.apply-resume-dropzone:hover {
+  border-color: #4F46E5;
+  background: #EEF2FF;
+}
+
+.dropzone-upload-icon {
+  font-size: 32px;
+  color: #4F46E5;
+  margin-bottom: 8px;
+}
+
+.dropzone-prompt h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.choose-file-pill-btn {
+  display: inline-block;
+  background: #EEF2FF;
+  color: #4F46E5;
+  border: 1px solid #C7D2FE;
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+/* SELECTED FILE BOX */
+.selected-file-badge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 14px 20px;
+  margin-top: 16px;
+}
+
+.file-info-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pdf-icon-red {
+  color: #EF4444;
+  font-size: 20px;
+}
+
+.delete-file-btn {
+  background: transparent;
+  border: none;
+  color: #EF4444;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* FORM INPUT FIELDS */
+.form-input-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-input-grid-3col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.field-group label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.field-group label span {
+  color: #EF4444;
+}
+
+.field-input, .field-textarea, .field-select {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid #CBD5E1;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #0F172A;
+  background: #FFFFFF;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.field-input:focus, .field-textarea:focus, .field-select:focus {
+  outline: none;
+  border-color: #4F46E5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+/* SUGGESTED SKILLS BADGES */
+.suggested-skills-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.suggested-skills-row span.suggested-label {
+  font-size: 12px;
+  color: #64748B;
+  font-weight: 600;
+}
+
+.skill-tag-pill {
+  background: #EEF2FF;
+  border: 1px solid #C7D2FE;
+  color: #4F46E5;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.skill-tag-pill:hover {
+  background: #4F46E5;
+  color: #FFFFFF;
+}
+
+/* DYNAMIC ADD BUTTON */
+.section-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.add-item-btn {
+  background: #EEF2FF;
+  border: 1px solid #C7D2FE;
+  color: #4F46E5;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+/* FORM FOOTER ACTIONS */
+.apply-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.cancel-form-btn {
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  color: #475569;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.submit-application-btn {
+  background: #4F46E5;
+  color: #FFFFFF;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);
+  transition: all 0.2s ease;
+}
+
+.submit-application-btn:hover {
+  background: #4338CA;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+  .form-input-grid-2col, .form-input-grid-3col {
+    grid-template-columns: 1fr;
+  }
+  .apply-container {
+    padding: 0 12px;
+    width: 100%;
+  }
+}

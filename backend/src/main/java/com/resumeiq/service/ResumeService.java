@@ -46,159 +46,130 @@ public class ResumeService {
     }
 
     // =========================================================
-    // UPLOAD RESUME
-    // PDF -> TEXT -> OPENAI -> SKILLS/EDUCATION/EXPERIENCE
-    // -> DATABASE
+    // UPLOAD RESUME WITH FULL CANDIDATE FORM DATA & AI FALLBACK
     // =========================================================
 
-    public Resume uploadResume(
+    public Resume uploadResumeWithDetails(
             MultipartFile file,
-            Long userId
+            Long userId,
+            String name,
+            String email,
+            String phone,
+            String formSkills,
+            String formEducation,
+            String formExperience,
+            String formProjects,
+            String formCertifications,
+            String formSummary,
+            String formAchievements
     ) throws Exception {
-
-        // -----------------------------------------------------
-        // 1. Validate file
-        // -----------------------------------------------------
-
-        if (file == null || file.isEmpty()) {
-            throw new RuntimeException("Resume file is empty");
-        }
-
-        String originalFileName = file.getOriginalFilename();
-
-        if (originalFileName == null ||
-                !originalFileName.toLowerCase().endsWith(".pdf")) {
-
-            throw new RuntimeException(
-                    "Only PDF resumes are supported"
-            );
-        }
-
-        // -----------------------------------------------------
-        // 2. Find user
-        // -----------------------------------------------------
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
-                        new RuntimeException(
-                                "User not found with id: " + userId
-                        )
+                        new RuntimeException("User not found with id: " + userId)
                 );
 
-        // -----------------------------------------------------
-        // 3. Save PDF file
-        // -----------------------------------------------------
+        String originalFileName = "Candidate_Resume.pdf";
+        String fileUrlPath = "";
+        String parsedText = "";
 
-        Path uploadPath = Paths.get(uploadDir);
+        if (file != null && !file.isEmpty()) {
+            originalFileName = file.getOriginalFilename();
+            Path uploadPath = Paths.get(uploadDir);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
 
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
+            String savedFileName = UUID.randomUUID() + "_" + originalFileName;
+            Path filePath = uploadPath.resolve(savedFileName);
+            Files.copy(file.getInputStream(), filePath);
+
+            fileUrlPath = "/uploads/resumes/" + savedFileName;
+
+            try {
+                parsedText = extractTextFromPdf(file);
+            } catch (Exception e) {
+                System.out.println("Notice: Could not extract PDF text. Using candidate form text.");
+            }
         }
 
-        String fileName =
-                UUID.randomUUID() + "_" + originalFileName;
-
-        Path filePath =
-                uploadPath.resolve(fileName);
-
-        Files.copy(
-                file.getInputStream(),
-                filePath
-        );
-
-        // -----------------------------------------------------
-        // 4. Extract text from PDF using PDFBox
-        // -----------------------------------------------------
-
-        String parsedText =
-                extractTextFromPdf(file);
-
-        if (parsedText == null ||
-                parsedText.trim().isEmpty()) {
-
-            throw new RuntimeException(
-                    "Could not extract text from resume"
-            );
+        // Build combined text representation for AI matching
+        StringBuilder combinedText = new StringBuilder();
+        if (parsedText != null && !parsedText.isBlank()) {
+            combinedText.append(parsedText).append("\n");
         }
+        if (name != null) combinedText.append("Name: ").append(name).append("\n");
+        if (email != null) combinedText.append("Email: ").append(email).append("\n");
+        if (formSkills != null) combinedText.append("Skills: ").append(formSkills).append("\n");
+        if (formEducation != null) combinedText.append("Education: ").append(formEducation).append("\n");
+        if (formExperience != null) combinedText.append("Experience: ").append(formExperience).append("\n");
+        if (formSummary != null) combinedText.append("Summary: ").append(formSummary).append("\n");
 
-        // -----------------------------------------------------
-        // 5. Send extracted text to OpenAI
-        // -----------------------------------------------------
+        String finalParsedText = combinedText.toString();
 
-        String aiResponse =
-                googleApiService.extractResumeData(parsedText);
+        String aiSkills = formSkills;
+        String aiEducation = formEducation;
+        String aiExperience = formExperience;
 
-        // -----------------------------------------------------
-        // 6. Convert OpenAI JSON response
-        //    into skills, education, experience
-        // -----------------------------------------------------
+        // Try AI Extraction with fallback if quota fails or API times out
+        try {
+            if (finalParsedText != null && !finalParsedText.isBlank()) {
+                String aiResponse = googleApiService.extractResumeData(finalParsedText);
+                if (aiResponse != null && !aiResponse.isBlank()) {
+                    JsonNode json = objectMapper.readTree(aiResponse);
+                    String extSkills = json.path("skills").asText("");
+                    String extEducation = json.path("education").asText("");
+                    String extExperience = json.path("experience").asText("");
 
-        JsonNode json =
-                objectMapper.readTree(aiResponse);
-
-        String skills =
-                json.path("skills").asText("");
-
-        String education =
-                json.path("education").asText("");
-
-        String experience =
-                json.path("experience").asText("");
-
-        // -----------------------------------------------------
-        // 7. Create Resume entity
-        // -----------------------------------------------------
+                    if (!extSkills.isBlank()) aiSkills = extSkills + (formSkills != null ? ", " + formSkills : "");
+                    if (!extEducation.isBlank()) aiEducation = extEducation;
+                    if (!extExperience.isBlank()) aiExperience = extExperience;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Notice: Gemini API parsing skipped or quota exceeded. Using candidate form inputs.");
+        }
 
         Resume resume = Resume.builder()
                 .user(user)
                 .fileName(originalFileName)
-                .fileUrl("/uploads/resumes/" + fileName)
-                .parsedText(parsedText)
-                .skills(skills)
-                .education(education)
-                .experience(experience)
+                .fileUrl(fileUrlPath)
+                .parsedText(finalParsedText)
+                .name(name != null && !name.isBlank() ? name : user.getName())
+                .email(email != null && !email.isBlank() ? email : user.getEmail())
+                .phone(phone)
+                .skills(aiSkills)
+                .education(aiEducation)
+                .experience(aiExperience)
+                .projects(formProjects)
+                .certifications(formCertifications)
+                .summary(formSummary)
+                .achievements(formAchievements)
                 .build();
 
-        // -----------------------------------------------------
-        // 8. Save to MySQL
-        // -----------------------------------------------------
-
         return resumeRepository.save(resume);
+    }
+
+    public Resume uploadResume(MultipartFile file, Long userId) throws Exception {
+        return uploadResumeWithDetails(file, userId, null, null, null, null, null, null, null, null, null, null);
     }
 
     // =========================================================
     // PDF -> TEXT
     // =========================================================
 
-    private String extractTextFromPdf(
-            MultipartFile file
-    ) throws IOException {
-
-        try (PDDocument document =
-                     PDDocument.load(file.getInputStream())) {
-
-            PDFTextStripper stripper =
-                    new PDFTextStripper();
-
+    private String extractTextFromPdf(MultipartFile file) throws IOException {
+        try (PDDocument document = PDDocument.load(file.getInputStream())) {
+            PDFTextStripper stripper = new PDFTextStripper();
             return stripper.getText(document);
         }
     }
 
-    // =========================================================
-    // GET RESUME BY ID
-    // =========================================================
-
     public Optional<Resume> getResumeById(Long id) {
-
         return resumeRepository.findById(id);
     }
 
-    // =========================================================
-    // GET ALL RESUMES OF A USER
-    // =========================================================
-
     public List<Resume> getResumesByUserId(Long userId) {
-
         return resumeRepository.findByUserId(userId);
     }
 }

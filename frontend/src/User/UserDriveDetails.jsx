@@ -36,13 +36,6 @@ export default function UserDriveDetails() {
   const [errorMsg, setErrorMsg] = useState("");
   const [isApplied, setIsApplied] = useState(false);
 
-  // Apply Modal State
-  const [showApplyModal, setShowApplyModal] = useState(false);
-  const [resumeFile, setResumeFile] = useState(null);
-  const [applying, setApplying] = useState(false);
-  const [applySuccess, setApplySuccess] = useState(false);
-  const [applyError, setApplyError] = useState("");
-
   // Get Initials
   const getInitials = (name) => {
     if (!name) return "U";
@@ -102,56 +95,6 @@ export default function UserDriveDetails() {
   useEffect(() => {
     fetchDriveDetails();
   }, [driveId]);
-
-  // Handle Application Submit
-  const handleApplySubmit = async (e) => {
-    e.preventDefault();
-    setApplyError("");
-
-    if (!resumeFile) {
-      setApplyError("Please select a PDF resume file to apply.");
-      return;
-    }
-
-    setApplying(true);
-
-    try {
-      // 1. Upload candidate resume PDF
-      const formData = new FormData();
-      formData.append("file", resumeFile);
-      formData.append("userId", userId || 1);
-
-      const resumeRes = await authApi.uploadResume(formData);
-      const uploadedResume = resumeRes.data;
-
-      if (!uploadedResume || !uploadedResume.id) {
-        throw new Error("Failed to process resume file.");
-      }
-
-      // 2. Submit application & evaluate with Gemini AI
-      await authApi.applyToDrive({
-        applicantId: Number(userId || 1),
-        driveId: Number(driveId),
-        resumeId: Number(uploadedResume.id)
-      });
-
-      setApplySuccess(true);
-      setIsApplied(true);
-      setTimeout(() => {
-        setShowApplyModal(false);
-        setApplySuccess(false);
-      }, 2000);
-    } catch (err) {
-      console.error("Application error:", err);
-      let msg = "Failed to submit application. Please try again.";
-      if (err.response && err.response.data && err.response.data.message) {
-        msg = err.response.data.message;
-      }
-      setApplyError(msg);
-    } finally {
-      setApplying(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -269,7 +212,7 @@ export default function UserDriveDetails() {
                 <FaCheck /> Applied
               </span>
             ) : (
-              <button className="apply-primary-btn" onClick={() => setShowApplyModal(true)}>
+              <button className="apply-primary-btn" onClick={() => navigate(`/user/apply/${driveId}`)}>
                 <FaPaperPlane /> Apply Now
               </button>
             )}
@@ -410,79 +353,6 @@ export default function UserDriveDetails() {
           </div>
         </div>
       </main>
-
-      {/* APPLY MODAL */}
-      {showApplyModal && (
-        <div className="modal-overlay">
-          <div className="apply-modal-card">
-            <div className="modal-header">
-              <h2>Apply to {drive.driveName}</h2>
-              <button className="modal-close-btn" onClick={() => setShowApplyModal(false)}>
-                <FaTimes />
-              </button>
-            </div>
-
-            {applySuccess ? (
-              <div style={{ textAlign: "center", padding: "36px 0", color: "#16A34A" }}>
-                <FaCheck style={{ fontSize: "44px", marginBottom: "12px" }} />
-                <h3>Application Submitted Successfully!</h3>
-                <p style={{ color: "#64748B", fontSize: "14px", marginTop: "4px" }}>
-                  Gemini AI evaluated your resume score and matched skills.
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleApplySubmit}>
-                {applyError && (
-                  <div style={{ background: "#FEE2E2", color: "#B91C1C", padding: "12px 16px", borderRadius: "10px", marginBottom: "16px", fontSize: "13px" }}>
-                    {applyError}
-                  </div>
-                )}
-
-                <div style={{ marginBottom: "20px" }}>
-                  <label style={{ display: "block", fontSize: "13px", fontWeight: "700", marginBottom: "8px", color: "#334155" }}>
-                    Upload Your PDF Resume *
-                  </label>
-                  <div
-                    style={{ border: "2px dashed #CBD5E1", borderRadius: "14px", padding: "28px", textAlign: "center", background: "#F8FAFC", cursor: "pointer" }}
-                    onClick={() => document.getElementById("apply-resume-input").click()}
-                  >
-                    <FaCloudUploadAlt style={{ fontSize: "32px", color: "#4F46E5", marginBottom: "8px" }} />
-                    <p style={{ fontSize: "14px", fontWeight: "700", color: "#0F172A" }}>
-                      {resumeFile ? resumeFile.name : "Click to select PDF Resume"}
-                    </p>
-                    <span style={{ fontSize: "11px", color: "#94A3B8" }}>PDF document up to 10MB</span>
-                    <input
-                      type="file"
-                      id="apply-resume-input"
-                      accept=".pdf,application/pdf"
-                      style={{ display: "none" }}
-                      onChange={(e) => setResumeFile(e.target.files[0])}
-                    />
-                  </div>
-                </div>
-
-                <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "24px" }}>
-                  <button
-                    type="button"
-                    style={{ padding: "10px 20px", background: "#FFF", border: "1px solid #CBD5E1", borderRadius: "10px", cursor: "pointer", fontWeight: "700", color: "#475569" }}
-                    onClick={() => setShowApplyModal(false)}
-                  >
-                    Cancel
-                  </button>
-
-                  <button
-                    type="submit"
-                    disabled={applying}
-                    style={{ padding: "10px 24px", background: "#4F46E5", border: "none", borderRadius: "10px", cursor: "pointer", fontWeight: "700", color: "#FFF", display: "flex", alignItems: "center", gap: "8px" }}
-                  >
-                    {applying ? "Parsing Resume & Submitting..." : "Submit Application"}
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
