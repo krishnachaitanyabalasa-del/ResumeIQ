@@ -21,6 +21,10 @@ export const authApi = {
   getAdminProfile: (adminId) => axiosInstance.get(`/admin/${adminId}`),
 
   // Drives API
+  getAllDrives: () => axiosInstance.get("/drives"),
+
+  getOpenDrives: () => axiosInstance.get("/drives/open"),
+
   getMyDrives: () => axiosInstance.get("/drives/my-drives"),
 
   getMyDriveStats: () => axiosInstance.get("/drives/my-drives/stats"),
@@ -36,6 +40,10 @@ export const authApi = {
 
   // Applications API
   getApplicationsByDrive: (driveId) => axiosInstance.get(`/applications/drive/${driveId}`),
+
+  getApplicationsByUser: (userId) => axiosInstance.get(`/applications/user/${userId}`),
+
+  applyToDrive: (applicationData) => axiosInstance.post("/applications", applicationData),
 };
 
 export default authApi;
