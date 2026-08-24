@@ -69,6 +69,11 @@ public class ResumeService {
                         new RuntimeException("User not found with id: " + userId)
                 );
 
+        if (phone != null && !phone.isBlank()) {
+            user.setPhone(phone);
+            userRepository.save(user);
+        }
+
         String originalFileName = "Candidate_Resume.pdf";
         String fileUrlPath = "";
         String parsedText = "";
@@ -100,6 +105,7 @@ public class ResumeService {
         }
         if (name != null) combinedText.append("Name: ").append(name).append("\n");
         if (email != null) combinedText.append("Email: ").append(email).append("\n");
+        if (phone != null) combinedText.append("Phone: ").append(phone).append("\n");
         if (formSkills != null) combinedText.append("Skills: ").append(formSkills).append("\n");
         if (formEducation != null) combinedText.append("Education: ").append(formEducation).append("\n");
         if (formExperience != null) combinedText.append("Experience: ").append(formExperience).append("\n");

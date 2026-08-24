@@ -7,68 +7,81 @@ import {
   FaBell,
   FaArrowLeft,
   FaBriefcase,
-  FaBuilding,
   FaMapMarkerAlt,
   FaUsers,
   FaClock,
-  FaSearch,
-  FaFileDownload,
-  FaCode,
+  FaTools,
+  FaGraduationCap,
+  FaUserCheck,
+  FaCheck,
   FaChevronDown,
   FaChevronLeft,
   FaChevronRight,
-  FaGraduationCap,
-  FaUserCheck,
-  FaTools,
-  FaCheck
+  FaSearch,
+  FaFileDownload,
+  FaCode,
+  FaBuilding,
+  FaEye,
+  FaTimes,
+  FaPhoneAlt,
+  FaEnvelope,
+  FaDownload,
+  FaStar
 } from "react-icons/fa";
 
 export default function DriveDetails() {
   const { driveId } = useParams();
   const navigate = useNavigate();
 
+  // Admin details
   const adminName = sessionStorage.getItem("name") || "Admin";
+
   const getInitials = (name) => {
-    if (!name) return "AD";
+    if (!name) return "A";
     const parts = name.trim().split(" ");
     return parts.length >= 2
       ? (parts[0][0] + parts[1][0]).toUpperCase()
       : name.slice(0, 2).toUpperCase();
   };
+
   const adminInitials = getInitials(adminName);
 
   // States
   const [drive, setDrive] = useState(null);
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Fetch Drive Details and Applied Candidates from Backend APIs
+  // Search & Filter
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+
+  // Candidate Details Modal State
+  const [selectedCandidateApp, setSelectedCandidateApp] = useState(null);
+
+  // Fetch Drive & Applications Data
   const fetchData = async () => {
     setLoading(true);
     setErrorMessage("");
 
     try {
-      // Fetch drive info and candidates applied to this drive
-      const [driveRes, appsRes] = await Promise.all([
+      const [driveRes, appsRes] = await Promise.allSettled([
         authApi.getDriveById(driveId),
         authApi.getApplicationsByDrive(driveId)
       ]);
 
-      if (driveRes && driveRes.data) {
-        setDrive(driveRes.data);
+      if (driveRes.status === "fulfilled" && driveRes.value.data) {
+        setDrive(driveRes.value.data);
+      } else {
+        setErrorMessage("Drive details not found.");
       }
 
-      if (appsRes && Array.isArray(appsRes.data)) {
-        setApplications(appsRes.data);
-      } else {
-        setApplications([]);
+      if (appsRes.status === "fulfilled" && Array.isArray(appsRes.value.data)) {
+        setApplications(appsRes.value.data);
       }
     } catch (err) {
-      console.error("Fetch Drive Details Error:", err);
-      setErrorMessage("Failed to load drive details or applications from backend server.");
+      console.error("Error loading drive details:", err);
+      setErrorMessage("Failed to load drive details from server.");
     } finally {
       setLoading(false);
     }
@@ -78,60 +91,63 @@ export default function DriveDetails() {
     fetchData();
   }, [driveId]);
 
-  // Update Status
+  // Handle Drive Status Change
   const handleStatusChange = async (newStatus) => {
     setShowStatusDropdown(false);
     try {
-      await authApi.updateDrive(driveId, { status: newStatus });
-      setDrive({ ...drive, status: newStatus });
+      const updatedData = { ...drive, status: newStatus };
+      await authApi.updateDrive(driveId, updatedData);
+      setDrive(updatedData);
     } catch (err) {
-      console.error("Status Update Error:", err);
-      alert("Failed to update drive status.");
+      console.error("Error updating drive status:", err);
+      alert("Failed to update status.");
     }
   };
 
-  // Export Applied Candidates to Excel / CSV
+  // Export Candidates List to CSV / Excel format
   const handleExportExcel = () => {
     if (applications.length === 0) {
-      alert("No candidate applications to export.");
+      alert("No candidate data available to export.");
       return;
     }
 
-    const headers = ["Index", "Candidate Name", "Email", "Phone", "Experience", "Resume Score", "Applied On"];
-    const rows = applications.map((app, idx) => [
-      idx + 1,
-      `"${app.applicant?.name || "Candidate"}"`,
-      `"${app.applicant?.email || ""}"`,
-      `"${app.applicant?.phone || "N/A"}"`,
-      `"${app.applicant?.experience || app.experience || "0-2 years"}"`,
-      app.score || 0,
-      `"${app.appliedAt ? new Date(app.appliedAt).toLocaleString() : ""}"`
-    ]);
+    const headers = ["#", "Candidate Name", "Email", "Phone", "Experience", "Resume Score", "Applied On"];
+    const rows = applications.map((app, index) => {
+      const name = app.resume?.name || app.applicant?.name || "Candidate";
+      const email = app.resume?.email || app.applicant?.email || "N/A";
+      const phone = app.resume?.phone || app.applicant?.phone || "N/A";
+      const exp = app.resume?.experience || app.applicant?.experience || drive?.experience || "N/A";
+      const score = Math.round(app.score || 0);
+      const appliedDate = app.appliedAt ? new Date(app.appliedAt).toLocaleString() : "N/A";
 
-    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+      return [index + 1, `"${name}"`, `"${email}"`, `"${phone}"`, `"${exp}"`, score, `"${appliedDate}"`].join(",");
+    });
+
+    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows].join("\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `${(drive?.driveName || "Drive").replace(/\s+/g, "_")}_Candidates.csv`);
+    link.setAttribute("download", `Applied_Candidates_Drive_${driveId}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  // Filter candidates by search query
+  // Filter applications by search query
   const filteredApps = applications.filter((app) => {
-    const name = app.applicant?.name || "";
-    const email = app.applicant?.email || "";
-    const phone = app.applicant?.phone || "";
     const query = searchQuery.toLowerCase();
-    return name.toLowerCase().includes(query) || email.toLowerCase().includes(query) || phone.includes(query);
+    const name = (app.resume?.name || app.applicant?.name || "").toLowerCase();
+    const email = (app.resume?.email || app.applicant?.email || "").toLowerCase();
+    const phone = (app.resume?.phone || app.applicant?.phone || "").toLowerCase();
+
+    return name.includes(query) || email.includes(query) || phone.includes(query);
   });
 
   if (loading) {
     return (
       <div className="drive-details-page">
-        <div style={{ textAlign: "center", padding: "100px", color: "#64748B", fontSize: "16px", fontWeight: "600" }}>
-          Loading drive details and candidates from backend...
+        <div style={{ textAlign: "center", padding: "80px", color: "#64748B" }}>
+          Loading drive details from backend database...
         </div>
       </div>
     );
@@ -139,28 +155,20 @@ export default function DriveDetails() {
 
   return (
     <div className="drive-details-page">
-      {/* NAVBAR */}
-      <nav className="dashboard-navbar">
-        <div className="navbar-brand" onClick={() => navigate("/")}>
-          <div className="navbar-brand-icon">
-            <FaFileAlt />
-          </div>
-          <div className="navbar-brand-text">
-            <h2>ResumeIQ</h2>
-            <p>Recruiter & HR Admin Portal</p>
+      {/* TOP NAVBAR */}
+      <nav className="navbar-admin" style={{ display: "flex", justifyContent: "space-between", padding: "16px 32px", background: "#FFF", borderBottom: "1px solid #E2E8F0" }}>
+        <div className="navbar-left" style={{ display: "flex", alignItems: "center", gap: "12px", cursor: "pointer" }} onClick={() => navigate("/admin-home")}>
+          <div className="nav-brand-icon" style={{ background: "#4F46E5", color: "#FFF", width: "36px", height: "36px", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "800" }}>IQ</div>
+          <div>
+            <h2 style={{ fontSize: "18px", fontWeight: "800", color: "#0F172A" }}>ResumeIQ Admin</h2>
+            <p style={{ fontSize: "11px", color: "#64748B" }}>Recruiter & HR Admin Portal</p>
           </div>
         </div>
 
-        <div className="navbar-right">
-          <div className="notification-btn">
-            <FaBell />
-            <span className="notification-badge">3</span>
-          </div>
-
-          <div className="admin-profile-dropdown" onClick={() => navigate("/admin-home")}>
-            <div className="admin-avatar-small">{adminInitials}</div>
-            <span className="admin-name-text">{adminName}</span>
-            <FaChevronDown style={{ fontSize: "11px", color: "#94A3B8" }} />
+        <div className="navbar-right" style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <div className="admin-profile-dropdown" style={{ display: "flex", alignItems: "center", gap: "8px", background: "#F8FAFC", padding: "6px 14px", borderRadius: "20px", border: "1px solid #E2E8F0" }}>
+            <div className="admin-avatar-small" style={{ width: "32px", height: "32px", background: "#4F46E5", color: "#FFF", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "800", fontSize: "12px" }}>{adminInitials}</div>
+            <span className="admin-name-text" style={{ fontSize: "14px", fontWeight: "700" }}>{adminName}</span>
           </div>
         </div>
       </nav>
@@ -169,7 +177,7 @@ export default function DriveDetails() {
       <main className="details-content-container">
         {/* BREADCRUMB & BACK BUTTON */}
         <div className="breadcrumb-row">
-          <button className="cancel-btn" style={{ padding: "6px 14px" }} onClick={() => navigate("/admin-home")}>
+          <button className="cancel-btn" style={{ padding: "6px 14px", background: "#FFF", border: "1px solid #CBD5E1", borderRadius: "8px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", fontWeight: "700", color: "#334155" }} onClick={() => navigate("/admin-home")}>
             <FaArrowLeft /> Back to Drives
           </button>
           <span>Drives</span> &gt; <span className="breadcrumb-current">Drive Details</span>
@@ -195,11 +203,11 @@ export default function DriveDetails() {
             <div>
               <div className="banner-title-row">
                 <h1>{drive?.driveName}</h1>
-                <span className="status-badge status-active">{drive?.status || "OPEN"}</span>
+                <span className="status-badge status-active">{(drive?.status || "OPEN").toUpperCase()}</span>
               </div>
               <div className="banner-meta">
                 Drive ID: JD-{drive?.id || driveId} • Created on{" "}
-                {drive?.createdAt ? new Date(drive.createdAt).toLocaleDateString() : "N/A"} by{" "}
+                {drive?.createdAt ? new Date(drive.createdAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "N/A"} by{" "}
                 {drive?.createdByEmail || "admin@gmail.com"}
               </div>
             </div>
@@ -213,7 +221,7 @@ export default function DriveDetails() {
             >
               <span>Change Status</span>
               <span className="status-badge status-active" style={{ fontSize: "11px" }}>
-                ● {drive?.status || "OPEN"}
+                ● {(drive?.status || "OPEN").toUpperCase()}
               </span>
               <FaChevronDown style={{ fontSize: "11px", color: "#64748B" }} />
             </button>
@@ -275,8 +283,8 @@ export default function DriveDetails() {
           <div className="strip-box">
             <div className="strip-icon"><FaClock /></div>
             <div className="strip-info">
-              <label>Drive Type</label>
-              <div className="strip-value">Full-time</div>
+              <label>Employment Type</label>
+              <div className="strip-value">{drive?.employmentType || "Full-time"}</div>
             </div>
           </div>
         </div>
@@ -285,18 +293,18 @@ export default function DriveDetails() {
         <div className="middle-details-grid">
           {/* JOB DESCRIPTION BOX */}
           <div className="section-card jd-box">
-            <div className="section-header">
-              <div className="section-icon-badge"><FaFileAlt /></div>
-              <h3>Job Description</h3>
+            <div className="section-header" style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
+              <div className="section-icon-badge" style={{ background: "#EEF2FF", color: "#4F46E5", padding: "8px", borderRadius: "8px" }}><FaFileAlt /></div>
+              <h3 style={{ fontSize: "16px", fontWeight: "800", color: "#0F172A" }}>Job Description</h3>
             </div>
-            <p>{drive?.description || drive?.jdText || "No job description text provided."}</p>
+            <p style={{ whiteSpace: "pre-line" }}>{drive?.description || drive?.jdText || "No job description text provided."}</p>
           </div>
 
           {/* REQUIREMENTS TABLE BOX */}
           <div className="section-card">
-            <div className="section-header">
-              <div className="section-icon-badge"><FaTools /></div>
-              <h3>Requirements</h3>
+            <div className="section-header" style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
+              <div className="section-icon-badge" style={{ background: "#EEF2FF", color: "#4F46E5", padding: "8px", borderRadius: "8px" }}><FaTools /></div>
+              <h3 style={{ fontSize: "16px", fontWeight: "800", color: "#0F172A" }}>Requirements</h3>
             </div>
 
             <table className="req-table">
@@ -315,11 +323,11 @@ export default function DriveDetails() {
                 </tr>
                 <tr>
                   <td className="req-label"><FaClock /> Employment Type</td>
-                  <td className="req-value">Full-time</td>
+                  <td className="req-value">{drive?.employmentType || "Full-time"}</td>
                 </tr>
                 <tr>
                   <td className="req-label"><FaUserCheck /> Drive Status</td>
-                  <td className="req-value"><span className="status-badge status-active">{drive?.status || "OPEN"}</span></td>
+                  <td className="req-value"><span className="status-badge status-active">{(drive?.status || "OPEN").toUpperCase()}</span></td>
                 </tr>
               </tbody>
             </table>
@@ -339,11 +347,11 @@ export default function DriveDetails() {
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-              <div className="search-box" style={{ minWidth: "220px" }}>
-                <FaSearch className="search-icon" />
+              <div className="search-box" style={{ minWidth: "220px", display: "flex", alignItems: "center", background: "#F8FAFC", border: "1px solid #CBD5E1", borderRadius: "10px", padding: "6px 12px" }}>
+                <FaSearch className="search-icon" style={{ color: "#94A3B8", marginRight: "8px" }} />
                 <input
                   type="text"
-                  className="search-input"
+                  style={{ border: "none", outline: "none", background: "transparent", width: "100%", fontSize: "13px" }}
                   placeholder="Search by name, email or phone..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -369,12 +377,13 @@ export default function DriveDetails() {
                   <th>Experience</th>
                   <th>Resume Score</th>
                   <th>Applied On</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredApps.length === 0 ? (
                   <tr>
-                    <td colSpan="7" style={{ textAlign: "center", padding: "32px", color: "#94A3B8" }}>
+                    <td colSpan="8" style={{ textAlign: "center", padding: "32px", color: "#94A3B8" }}>
                       No candidate applications found in database for this drive.
                     </td>
                   </tr>
@@ -382,7 +391,10 @@ export default function DriveDetails() {
                   filteredApps.map((app, idx) => {
                     const score = Math.round(app.score || 0);
                     const scoreClass = score >= 75 ? "score-green" : score >= 60 ? "score-orange" : "score-red";
-                    const candidateName = app.applicant?.name || "Candidate";
+
+                    const candidateName = app.resume?.name || app.applicant?.name || "Candidate";
+                    const candidateEmail = app.resume?.email || app.applicant?.email || "N/A";
+                    const candidatePhone = app.resume?.phone || app.applicant?.phone || app.phone || "N/A";
                     const candidateInitials = getInitials(candidateName);
 
                     return (
@@ -392,15 +404,20 @@ export default function DriveDetails() {
                         <td>
                           <div className="candidate-name-cell">
                             <div className="candidate-avatar">{candidateInitials}</div>
-                            <span>{candidateName}</span>
+                            <span style={{ fontWeight: "700" }}>{candidateName}</span>
                           </div>
                         </td>
 
-                        <td>{app.applicant?.email || "N/A"}</td>
+                        <td>{candidateEmail}</td>
 
-                        <td>{app.applicant?.phone || "N/A"}</td>
+                        {/* PHONE NUMBER - FETCHED FROM RESUME / USER */}
+                        <td>
+                          <span style={{ fontWeight: "600", color: "#0F172A" }}>
+                            {candidatePhone}
+                          </span>
+                        </td>
 
-                        <td>{app.applicant?.experience || app.experience || "0-2 years"}</td>
+                        <td>{app.resume?.experience || app.applicant?.experience || drive?.experience || "0-2 years"}</td>
 
                         <td>
                           <span className={`score-badge ${scoreClass}`}>
@@ -411,6 +428,16 @@ export default function DriveDetails() {
                         <td style={{ fontSize: "12px", color: "#64748B" }}>
                           {app.appliedAt ? new Date(app.appliedAt).toLocaleString() : "N/A"}
                         </td>
+
+                        <td>
+                          <button
+                            className="action-view-btn"
+                            style={{ padding: "6px 12px", background: "#EEF2FF", border: "1px solid #C7D2FE", color: "#4F46E5", borderRadius: "8px", fontWeight: "700", fontSize: "12px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}
+                            onClick={() => setSelectedCandidateApp(app)}
+                          >
+                            View Details <FaEye />
+                          </button>
+                        </td>
                       </tr>
                     );
                   })
@@ -420,17 +447,190 @@ export default function DriveDetails() {
           </div>
 
           {/* FOOTER PAGINATION */}
-          <div className="table-footer">
+          <div className="table-footer" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "20px", fontSize: "13px", color: "#64748B" }}>
             <span>Showing {filteredApps.length} of {applications.length} candidates</span>
 
-            <div className="pagination-controls">
-              <button className="page-btn"><FaChevronLeft /></button>
-              <button className="page-btn active">1</button>
-              <button className="page-btn"><FaChevronRight /></button>
+            <div className="pagination-controls" style={{ display: "flex", gap: "6px" }}>
+              <button className="page-btn" style={{ padding: "6px 12px", borderRadius: "6px", border: "1px solid #CBD5E1", background: "#FFF" }}><FaChevronLeft /></button>
+              <button className="page-btn active" style={{ padding: "6px 12px", borderRadius: "6px", border: "none", background: "#4F46E5", color: "#FFF", fontWeight: "700" }}>1</button>
+              <button className="page-btn" style={{ padding: "6px 12px", borderRadius: "6px", border: "1px solid #CBD5E1", background: "#FFF" }}><FaChevronRight /></button>
             </div>
           </div>
         </div>
       </main>
+
+      {/* FULL CANDIDATE DETAILS MODAL */}
+      {selectedCandidateApp && (
+        <div className="modal-overlay" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(15, 23, 42, 0.65)", backdropFilter: "blur(4px)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
+          <div className="candidate-modal-card" style={{ background: "#FFFFFF", borderRadius: "24px", width: "100%", maxWidth: "880px", maxHeight: "90vh", overflowY: "auto", boxShadow: "0 20px 40px rgba(0,0,0,0.2)", display: "flex", flexDirection: "column" }}>
+            
+            {/* MODAL HEADER BANNER */}
+            <div style={{ padding: "24px 32px", borderBottom: "1px solid #E2E8F0", background: "#F8FAFC", display: "flex", justifyContent: "space-between", alignItems: "center", borderTopLeftRadius: "24px", borderTopRightRadius: "24px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: "#4F46E5", color: "#FFF", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "800", fontSize: "18px" }}>
+                  {getInitials(selectedCandidateApp.resume?.name || selectedCandidateApp.applicant?.name)}
+                </div>
+
+                <div>
+                  <h2 style={{ fontSize: "20px", fontWeight: "800", color: "#0F172A" }}>
+                    {selectedCandidateApp.resume?.name || selectedCandidateApp.applicant?.name || "Candidate Details"}
+                  </h2>
+                  <div style={{ fontSize: "13px", color: "#64748B", display: "flex", alignItems: "center", gap: "12px", marginTop: "2px" }}>
+                    <span><FaEnvelope style={{ marginRight: "4px" }} /> {selectedCandidateApp.resume?.email || selectedCandidateApp.applicant?.email}</span>
+                    <span><FaPhoneAlt style={{ marginRight: "4px" }} /> {selectedCandidateApp.resume?.phone || selectedCandidateApp.applicant?.phone || selectedCandidateApp.phone || "N/A"}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                {selectedCandidateApp.resume?.fileUrl && (
+                  <a
+                    href={`http://localhost:8080${selectedCandidateApp.resume.fileUrl}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ padding: "8px 16px", background: "#EEF2FF", border: "1px solid #C7D2FE", color: "#4F46E5", borderRadius: "10px", fontWeight: "700", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px", textDecoration: "none" }}
+                  >
+                    <FaDownload /> View PDF Resume
+                  </a>
+                )}
+
+                <button
+                  style={{ background: "#F1F5F9", border: "none", width: "36px", height: "36px", borderRadius: "50%", cursor: "pointer", color: "#64748B", fontSize: "16px" }}
+                  onClick={() => setSelectedCandidateApp(null)}
+                >
+                  <FaTimes />
+                </button>
+              </div>
+            </div>
+
+            {/* MODAL BODY CONTENT */}
+            <div style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: "24px" }}>
+              {/* SCORE BREAKDOWN BANNER */}
+              <div style={{ background: "#EEF2FF", border: "1px solid #C7D2FE", borderRadius: "16px", padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div>
+                  <div style={{ fontSize: "12px", fontWeight: "700", color: "#4338CA", textTransform: "uppercase" }}>
+                    AI Resume Match Evaluation
+                  </div>
+                  <h3 style={{ fontSize: "28px", fontWeight: "900", color: "#1E1B4B", marginTop: "4px" }}>
+                    {Math.round(selectedCandidateApp.score || 0)} <span style={{ fontSize: "16px", color: "#6366F1" }}>/ 100 Overall Score</span>
+                  </h3>
+                </div>
+
+                <div style={{ display: "flex", gap: "12px" }}>
+                  <div style={{ background: "#FFF", padding: "8px 14px", borderRadius: "10px", border: "1px solid #E0E7FF", textAlign: "center" }}>
+                    <div style={{ fontSize: "10px", color: "#64748B", fontWeight: "700" }}>SKILLS</div>
+                    <div style={{ fontSize: "14px", fontWeight: "800", color: "#0F172A" }}>{Math.round(selectedCandidateApp.skillsScore || 0)}%</div>
+                  </div>
+                  <div style={{ background: "#FFF", padding: "8px 14px", borderRadius: "10px", border: "1px solid #E0E7FF", textAlign: "center" }}>
+                    <div style={{ fontSize: "10px", color: "#64748B", fontWeight: "700" }}>EXPERIENCE</div>
+                    <div style={{ fontSize: "14px", fontWeight: "800", color: "#0F172A" }}>{Math.round(selectedCandidateApp.experienceScore || 0)}%</div>
+                  </div>
+                  <div style={{ background: "#FFF", padding: "8px 14px", borderRadius: "10px", border: "1px solid #E0E7FF", textAlign: "center" }}>
+                    <div style={{ fontSize: "10px", color: "#64748B", fontWeight: "700" }}>EDUCATION</div>
+                    <div style={{ fontSize: "14px", fontWeight: "800", color: "#0F172A" }}>{Math.round(selectedCandidateApp.educationScore || 0)}%</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* MATCHED & MISSING SKILLS */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "14px", padding: "16px 20px" }}>
+                  <h4 style={{ fontSize: "13px", fontWeight: "800", color: "#16A34A", marginBottom: "8px" }}>
+                    ✓ Matched Skills
+                  </h4>
+                  <div style={{ fontSize: "13px", color: "#334155", fontWeight: "600" }}>
+                    {selectedCandidateApp.matchedSkills || "Skills aligned with drive requirements."}
+                  </div>
+                </div>
+
+                <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "14px", padding: "16px 20px" }}>
+                  <h4 style={{ fontSize: "13px", fontWeight: "800", color: "#EA580C", marginBottom: "8px" }}>
+                    ⚠ Missing / Recommended Skills
+                  </h4>
+                  <div style={{ fontSize: "13px", color: "#334155", fontWeight: "600" }}>
+                    {selectedCandidateApp.missingSkills || "No major skill gaps identified."}
+                  </div>
+                </div>
+              </div>
+
+              {/* CANDIDATE SUBMITTED SECTIONS */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                {/* PROFESSIONAL SUMMARY */}
+                {selectedCandidateApp.resume?.summary && (
+                  <div style={{ borderBottom: "1px solid #F1F5F9", paddingBottom: "14px" }}>
+                    <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#0F172A", marginBottom: "6px" }}>
+                      Professional Summary
+                    </h4>
+                    <p style={{ fontSize: "13px", color: "#475569", lineHeight: "1.5" }}>
+                      {selectedCandidateApp.resume.summary}
+                    </p>
+                  </div>
+                )}
+
+                {/* SKILLS */}
+                {selectedCandidateApp.resume?.skills && (
+                  <div style={{ borderBottom: "1px solid #F1F5F9", paddingBottom: "14px" }}>
+                    <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#0F172A", marginBottom: "6px" }}>
+                      Candidate Skills
+                    </h4>
+                    <p style={{ fontSize: "13px", color: "#475569", fontWeight: "600" }}>
+                      {selectedCandidateApp.resume.skills}
+                    </p>
+                  </div>
+                )}
+
+                {/* EDUCATION */}
+                {selectedCandidateApp.resume?.education && (
+                  <div style={{ borderBottom: "1px solid #F1F5F9", paddingBottom: "14px" }}>
+                    <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#0F172A", marginBottom: "6px" }}>
+                      Education Background
+                    </h4>
+                    <p style={{ fontSize: "13px", color: "#475569" }}>
+                      {selectedCandidateApp.resume.education}
+                    </p>
+                  </div>
+                )}
+
+                {/* WORK EXPERIENCE */}
+                {selectedCandidateApp.resume?.experience && (
+                  <div style={{ borderBottom: "1px solid #F1F5F9", paddingBottom: "14px" }}>
+                    <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#0F172A", marginBottom: "6px" }}>
+                      Work Experience
+                    </h4>
+                    <p style={{ fontSize: "13px", color: "#475569" }}>
+                      {selectedCandidateApp.resume.experience}
+                    </p>
+                  </div>
+                )}
+
+                {/* PROJECTS */}
+                {selectedCandidateApp.resume?.projects && (
+                  <div style={{ borderBottom: "1px solid #F1F5F9", paddingBottom: "14px" }}>
+                    <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#0F172A", marginBottom: "6px" }}>
+                      Key Projects
+                    </h4>
+                    <p style={{ fontSize: "13px", color: "#475569" }}>
+                      {selectedCandidateApp.resume.projects}
+                    </p>
+                  </div>
+                )}
+
+                {/* CERTIFICATIONS & ACHIEVEMENTS */}
+                {selectedCandidateApp.resume?.certifications && (
+                  <div>
+                    <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#0F172A", marginBottom: "6px" }}>
+                      Certifications & Achievements
+                    </h4>
+                    <p style={{ fontSize: "13px", color: "#475569" }}>
+                      {selectedCandidateApp.resume.certifications}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
