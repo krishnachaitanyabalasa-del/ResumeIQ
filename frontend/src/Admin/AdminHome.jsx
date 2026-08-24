@@ -298,7 +298,15 @@ export default function AdminHome() {
                       <td>
                         <div className="drive-name-cell">
                           <div className="drive-code-icon">
-                            <FaCode />
+                            {drive.companyLogo ? (
+                              <img
+                                src={drive.companyLogo}
+                                alt={drive.companyName || "Logo"}
+                                className="drive-company-logo-img"
+                              />
+                            ) : (
+                              <FaCode />
+                            )}
                           </div>
                           <div>
                             <div className="drive-info-title">{drive.driveName}</div>
