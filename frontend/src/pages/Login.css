@@ -10,10 +10,10 @@
 .login-left {
   flex: 1.1;
   background: linear-gradient(135deg, #F5F3FF 0%, #EFF6FF 50%, #EEF2FF 100%);
-  padding: 48px 56px;
+  padding: 40px 48px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   border-right: 1px solid #E2E8F0;
   position: relative;
   overflow: hidden;
@@ -56,7 +56,7 @@
 }
 
 .left-content {
-  margin-top: 40px;
+  margin-top: 24px;
   max-width: 480px;
 }
 
