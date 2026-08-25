@@ -25,6 +25,13 @@ import {
 export default function Home() {
   const navigate = useNavigate();
 
+  const [statusModal, setStatusModal] = useState({
+    isOpen: false,
+    type: "info",
+    title: "",
+    message: ""
+  });
+
   return (
     <div className="landing-page">
       {/* NAVBAR */}
