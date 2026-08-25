@@ -1,4 +1,5 @@
-.register-container {
+.register-container,
+.register-admin-container {
   display: flex;
   min-height: 100vh;
   width: 100%;
@@ -10,7 +11,8 @@
   overflow-x: hidden;
 }
 
-.register-card {
+.register-card,
+.register-admin-card {
   width: 100%;
   max-width: 520px;
   background-color: #FFFFFF;
@@ -26,6 +28,11 @@
   font-weight: 800;
   color: #0F172A;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0;
 }
 
 .register-subtitle {
@@ -50,10 +57,12 @@
 }
 
 @media (max-width: 640px) {
-  .register-container {
+  .register-container,
+  .register-admin-container {
     padding: 20px 12px;
   }
-  .register-card {
+  .register-card,
+  .register-admin-card {
     padding: 24px 18px;
     border-radius: 20px;
   }

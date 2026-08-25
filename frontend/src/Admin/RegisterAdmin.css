@@ -1,3 +1,4 @@
+.register-admin-container,
 .register-container {
   display: flex;
   min-height: 100vh;
@@ -10,6 +11,7 @@
   overflow-x: hidden;
 }
 
+.register-admin-card,
 .register-card {
   width: 100%;
   max-width: 520px;
@@ -26,6 +28,11 @@
   font-weight: 800;
   color: #0F172A;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0;
 }
 
 .register-subtitle {
@@ -50,9 +57,11 @@
 }
 
 @media (max-width: 640px) {
+  .register-admin-container,
   .register-container {
     padding: 20px 12px;
   }
+  .register-admin-card,
   .register-card {
     padding: 24px 18px;
     border-radius: 20px;
