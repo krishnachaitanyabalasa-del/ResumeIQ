@@ -127,19 +127,23 @@ public class JDParserService {
     // ============================================================
 
     private String extractSkills(String text) {
-        if (text == null || text.isBlank()) {
-            return "As specified in Job Description";
-        }
 
         List<String> found = new ArrayList<>();
+
+        String lowerText =
+                text.toLowerCase();
+
         for (String skill : SKILLS) {
-            Pattern pattern = Pattern.compile("\\b" + Pattern.quote(skill) + "\\b", Pattern.CASE_INSENSITIVE);
-            if (pattern.matcher(text).find()) {
+
+            if (lowerText.contains(
+                    skill.toLowerCase()
+            )) {
+
                 found.add(skill);
             }
         }
 
-        return found.isEmpty() ? "As specified in Job Description" : String.join(", ", found);
+        return String.join(", ", found);
     }
 
     // ============================================================
