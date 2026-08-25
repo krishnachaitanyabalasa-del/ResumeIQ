@@ -294,7 +294,7 @@ export default function DriveDetails() {
               <tbody>
                 <tr>
                   <td className="req-label"><FaTools /> Required Skills</td>
-                  <td className="req-value">{drive?.requiredSkills || "N/A"}</td>
+                  <td className="req-value">{(!drive?.requiredSkills || drive?.requiredSkills?.includes("C, Go, Data Structures")) ? "As specified in Job Description" : drive.requiredSkills}</td>
                 </tr>
                 <tr>
                   <td className="req-label"><FaGraduationCap /> Education</td>

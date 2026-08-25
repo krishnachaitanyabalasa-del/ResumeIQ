@@ -279,11 +279,11 @@ export default function UserDriveDetails() {
                 <tbody>
                   <tr>
                     <td><FaBriefcase className="req-row-icon" /> Required Skills</td>
-                    <td>{drive.requiredSkills || "Specified in Job Description"}</td>
+                    <td>{(!drive.requiredSkills || drive.requiredSkills.includes("C, Go, Data Structures")) ? "As specified in Job Description" : drive.requiredSkills}</td>
                   </tr>
                   <tr>
                     <td><FaGraduationCap className="req-row-icon" /> Qualifications</td>
-                    <td>{drive.requiredQualifications || "As specified by company"}</td>
+                    <td>{(!drive.requiredQualifications || drive.requiredQualifications === "As specified by company") ? "As specified in Job Description" : drive.requiredQualifications}</td>
                   </tr>
                   <tr>
                     <td><FaGraduationCap className="req-row-icon" /> Education</td>
@@ -291,7 +291,7 @@ export default function UserDriveDetails() {
                   </tr>
                   <tr>
                     <td><FaUserCheck className="req-row-icon" /> Experience</td>
-                    <td>{drive.requiredExperience || drive.experience || "As per JD"}</td>
+                    <td>{drive.requiredExperience || drive.experience || "As specified in Job Description"}</td>
                   </tr>
                   <tr>
                     <td><FaBriefcase className="req-row-icon" /> Employment Type</td>
