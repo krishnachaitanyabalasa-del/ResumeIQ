@@ -126,19 +126,6 @@ export default function LoginAdmin() {
               </div>
             </div>
           </div>
-
-          <div className="mockup-preview">
-            <div className="mockup-left">
-              <div className="mockup-line medium"></div>
-              <div className="mockup-line short"></div>
-              <div className="mockup-line"></div>
-            </div>
-
-            <div className="match-badge">
-              <div className="match-score">HR Admin</div>
-              <div className="match-label">Recruiter Control</div>
-            </div>
-          </div>
         </div>
       </div>
 

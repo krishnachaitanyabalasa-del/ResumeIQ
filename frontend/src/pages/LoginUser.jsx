@@ -128,22 +128,6 @@ export default function LoginUser() {
               </div>
             </div>
           </div>
-
-          <div className="mockup-preview">
-            <div className="mockup-left">
-              <div className="mockup-line medium"></div>
-              <div className="mockup-line short"></div>
-              <div className="mockup-line"></div>
-            </div>
-
-            <div className="match-badge">
-              <div className="match-score">92%</div>
-              <div className="match-label">Match Score</div>
-              <div className="match-stars">
-                <FaStar /><FaStar /><FaStar /><FaStar /><FaStar />
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
