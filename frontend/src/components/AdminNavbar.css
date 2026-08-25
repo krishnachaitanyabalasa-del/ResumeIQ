@@ -138,18 +138,18 @@
   }
 
   .hamburger-toggle-btn {
-    display: flex;
+    display: flex !important;
   }
 
   .admin-nav-right {
-    display: none;
+    display: none !important;
     position: absolute;
     top: 68px;
     left: 0;
     right: 0;
     background: #FFFFFF;
     border-bottom: 1px solid #E2E8F0;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     padding: 20px;
     flex-direction: column;
     align-items: flex-start;
@@ -158,7 +158,7 @@
   }
 
   .admin-nav-right.mobile-open {
-    display: flex;
+    display: flex !important;
   }
 
   .admin-profile-badge {
