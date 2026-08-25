@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { FaFileAlt, FaSignOutAlt } from "react-icons/fa";
+import { FaFileAlt, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa";
 import "./UserNavbar.css";
 
 export default function UserNavbar({ activeTab, setActiveTab }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const userName = sessionStorage.getItem("name") || "User";
 
@@ -24,10 +25,28 @@ export default function UserNavbar({ activeTab, setActiveTab }) {
     navigate("/login-user");
   };
 
+  const handleHomeClick = () => {
+    setMobileMenuOpen(false);
+    if (setActiveTab) setActiveTab("NOT_APPLIED");
+    navigate("/user-home");
+  };
+
+  const handleDrivesClick = () => {
+    setMobileMenuOpen(false);
+    if (setActiveTab) setActiveTab("NOT_APPLIED");
+    navigate("/user-home");
+  };
+
+  const handleApplicationsClick = () => {
+    setMobileMenuOpen(false);
+    if (setActiveTab) setActiveTab("APPLIED");
+    navigate("/user-home");
+  };
+
   return (
     <nav className="user-global-navbar">
       {/* BRAND LOGO LEFT */}
-      <div className="user-nav-left" onClick={() => navigate("/")}>
+      <div className="user-nav-left" onClick={handleHomeClick}>
         <div className="user-nav-brand-icon">
           <FaFileAlt />
         </div>
@@ -37,30 +56,33 @@ export default function UserNavbar({ activeTab, setActiveTab }) {
         </div>
       </div>
 
-      {/* NAV LINKS (HOME, DRIVES, MY APPLICATIONS) & USER PROFILE & RED LOGOUT */}
-      <div className="user-nav-right">
+      {/* HAMBURGER TOGGLE BUTTON FOR MOBILE */}
+      <button
+        className="hamburger-toggle-btn"
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        aria-label="Toggle navigation menu"
+      >
+        {mobileMenuOpen ? <FaTimes /> : <FaBars />}
+      </button>
+
+      {/* NAV LINKS & USER PROFILE & RED LOGOUT */}
+      <div className={`user-nav-right ${mobileMenuOpen ? "mobile-open" : ""}`}>
         <div className="user-nav-links-row">
           <span
-            className={`nav-link-item ${location.pathname === "/" ? "active" : ""}`}
-            onClick={() => navigate("/")}
+            className={`nav-link-item ${location.pathname === "/user-home" && activeTab !== "APPLIED" ? "active" : ""}`}
+            onClick={handleHomeClick}
           >
             Home
           </span>
           <span
             className={`nav-link-item ${location.pathname === "/user-home" && activeTab !== "APPLIED" ? "active" : ""}`}
-            onClick={() => {
-              if (setActiveTab) setActiveTab("NOT_APPLIED");
-              navigate("/user-home");
-            }}
+            onClick={handleDrivesClick}
           >
             Drives
           </span>
           <span
             className={`nav-link-item ${location.pathname === "/user-home" && activeTab === "APPLIED" ? "active" : ""}`}
-            onClick={() => {
-              if (setActiveTab) setActiveTab("APPLIED");
-              navigate("/user-home");
-            }}
+            onClick={handleApplicationsClick}
           >
             My Applications
           </span>

@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaFileAlt, FaSignOutAlt } from "react-icons/fa";
+import { FaFileAlt, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa";
 import "./AdminNavbar.css";
 
 export default function AdminNavbar() {
   const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const adminName = sessionStorage.getItem("name") || "Admin";
 
@@ -36,8 +37,17 @@ export default function AdminNavbar() {
         </div>
       </div>
 
+      {/* HAMBURGER TOGGLE BUTTON FOR MOBILE */}
+      <button
+        className="hamburger-toggle-btn"
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        aria-label="Toggle navigation menu"
+      >
+        {mobileMenuOpen ? <FaTimes /> : <FaBars />}
+      </button>
+
       {/* ADMIN PROFILE & RED LOGOUT BUTTON */}
-      <div className="admin-nav-right">
+      <div className={`admin-nav-right ${mobileMenuOpen ? "mobile-open" : ""}`}>
         <div className="admin-profile-badge">
           <div className="admin-avatar-circle">{adminInitials}</div>
           <span className="admin-name-text">{adminName}</span>

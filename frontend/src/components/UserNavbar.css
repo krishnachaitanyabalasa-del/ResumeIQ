@@ -28,6 +28,7 @@
   color: #FFFFFF;
   font-size: 20px;
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+  flex-shrink: 0;
 }
 
 .user-nav-brand-text h2 {
@@ -87,38 +88,6 @@
   border-radius: 2px;
 }
 
-.notification-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: #F1F5F9;
-  border: 1px solid #E2E8F0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #475569;
-  font-size: 15px;
-  position: relative;
-  cursor: pointer;
-}
-
-.notification-badge {
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  background: #EF4444;
-  color: #FFFFFF;
-  font-size: 10px;
-  font-weight: 800;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #FFFFFF;
-}
-
 .user-profile-badge {
   display: flex;
   align-items: center;
@@ -140,6 +109,7 @@
   justify-content: center;
   font-weight: 800;
   font-size: 12px;
+  flex-shrink: 0;
 }
 
 .user-name-text {
@@ -177,4 +147,85 @@
 .logout-red-icon {
   color: #EF4444;
   font-size: 15px;
+}
+
+/* HAMBURGER TOGGLE BUTTON (HIDDEN ON DESKTOP) */
+.hamburger-toggle-btn {
+  display: none;
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  color: #334155;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  z-index: 100;
+}
+
+/* RESPONSIVE MOBILE NAVIGATION DRAWER */
+@media (max-width: 900px) {
+  .user-global-navbar {
+    padding: 0 16px;
+    height: 68px;
+    position: relative;
+  }
+
+  .hamburger-toggle-btn {
+    display: flex;
+  }
+
+  .user-nav-right {
+    display: none;
+    position: absolute;
+    top: 68px;
+    left: 0;
+    right: 0;
+    background: #FFFFFF;
+    border-bottom: 1px solid #E2E8F0;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    z-index: 99;
+  }
+
+  .user-nav-right.mobile-open {
+    display: flex;
+  }
+
+  .user-nav-links-row {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .nav-link-item {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-sizing: border-box;
+  }
+
+  .nav-link-item.active {
+    background: #EEF2FF;
+  }
+
+  .nav-link-item.active::after {
+    display: none;
+  }
+
+  .user-profile-badge {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .user-logout-btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
