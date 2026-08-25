@@ -3,6 +3,7 @@
   min-height: 100vh;
   width: 100%;
   background-color: #FFFFFF;
+  box-sizing: border-box;
 }
 
 /* LEFT SIDE PANEL */
@@ -16,6 +17,7 @@
   border-right: 1px solid #E2E8F0;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .brand-header {
@@ -35,6 +37,7 @@
   color: #FFFFFF;
   font-size: 22px;
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+  flex-shrink: 0;
 }
 
 .brand-text h2 {
@@ -42,13 +45,14 @@
   font-weight: 800;
   color: #1E1B4B;
   letter-spacing: -0.5px;
+  margin: 0;
 }
 
 .brand-text p {
   font-size: 11px;
   font-weight: 600;
   color: #64748B;
-  margin-top: 1px;
+  margin: 1px 0 0 0;
 }
 
 .left-content {
@@ -102,60 +106,74 @@
   flex-shrink: 0;
 }
 
-.feature-title {
+.feature-details h4 {
   font-size: 15px;
   font-weight: 700;
   color: #0F172A;
+  margin: 0;
 }
 
-.feature-desc {
+.feature-details p {
   font-size: 13px;
   color: #64748B;
-  margin-top: 2px;
+  margin: 2px 0 0 0;
 }
 
-/* DECORATIVE MOCKUP */
-.left-mockup {
-  margin-top: 40px;
-}
-
-.mockup-card {
-  background: #FFFFFF;
-  border-radius: 20px;
-  padding: 20px 24px;
-  border: 1px solid #E2E8F0;
-  box-shadow: 0 10px 25px rgba(79, 70, 229, 0.08);
+.mockup-preview {
+  margin-top: 36px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 80%;
+  gap: 16px;
+  background: #FFFFFF;
+  padding: 16px 20px;
+  border-radius: 16px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.08);
+  width: fit-content;
+  max-width: 100%;
 }
+
+.mockup-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mockup-line {
+  height: 8px;
+  width: 120px;
+  background: #E2E8F0;
+  border-radius: 4px;
+}
+
+.mockup-line.medium { width: 90px; }
+.mockup-line.short { width: 60px; }
 
 .match-badge {
   background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
   border: 1px solid #C7D2FE;
-  padding: 12px 18px;
-  border-radius: 14px;
+  padding: 10px 16px;
+  border-radius: 12px;
   text-align: center;
 }
 
 .match-score {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
   color: #4F46E5;
 }
 
 .match-label {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 10px;
+  font-weight: 700;
   color: #4338CA;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 .match-stars {
   color: #F59E0B;
-  font-size: 12px;
-  margin-top: 4px;
+  font-size: 11px;
+  margin-top: 2px;
 }
 
 /* RIGHT SIDE PANEL */
@@ -166,6 +184,7 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  box-sizing: border-box;
 }
 
 .top-bar {
@@ -211,6 +230,7 @@
   border-radius: 24px;
   padding: 40px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  box-sizing: border-box;
 }
 
 .card-title {
@@ -219,6 +239,7 @@
   text-align: center;
   color: #0F172A;
   letter-spacing: -0.5px;
+  margin: 0;
 }
 
 .card-subtitle {
@@ -378,4 +399,90 @@
   font-weight: 600;
   margin-bottom: 20px;
   text-align: center;
+}
+
+/* RESPONSIVE AUTO-LAYOUT FOR MOBILE & TABLETS */
+@media (max-width: 960px) {
+  .login-container {
+    flex-direction: column;
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .login-left {
+    flex: none;
+    width: 100%;
+    padding: 32px 20px;
+    border-right: none;
+    border-bottom: 1px solid #E2E8F0;
+    box-sizing: border-box;
+  }
+
+  .left-content {
+    margin-top: 20px;
+    max-width: 100%;
+  }
+
+  .hero-headline {
+    font-size: 26px;
+    letter-spacing: -0.5px;
+  }
+
+  .hero-subtext {
+    font-size: 14px;
+    margin-top: 10px;
+  }
+
+  .features-list {
+    margin-top: 20px;
+    gap: 16px;
+  }
+
+  .mockup-preview {
+    margin-top: 20px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .login-right {
+    flex: none;
+    width: 100%;
+    padding: 24px 16px 40px;
+    box-sizing: border-box;
+  }
+
+  .top-bar {
+    max-width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .create-account-btn {
+    padding: 6px 14px;
+    font-size: 13px;
+  }
+
+  .login-card {
+    max-width: 100%;
+    width: 100%;
+    padding: 24px 18px;
+    border-radius: 20px;
+    box-sizing: border-box;
+  }
+
+  .card-title {
+    font-size: 24px;
+  }
+
+  .card-subtitle {
+    margin-bottom: 20px;
+    font-size: 13px;
+  }
+
+  .role-toggle {
+    margin-bottom: 20px;
+  }
 }
