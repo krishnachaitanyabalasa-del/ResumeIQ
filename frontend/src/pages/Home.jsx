@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import StatusModal from "../components/StatusModal";
 import "./Home.css";
 import {
   FaFileAlt,
@@ -38,7 +39,17 @@ export default function Home() {
           </div>
         </div>
 
-        <button className="about-btn" onClick={() => alert("ResumeIQ is an AI-powered resume screening and candidate ranking platform.")}>
+        <button
+          className="about-btn"
+          onClick={() =>
+            setStatusModal({
+              isOpen: true,
+              type: "info",
+              title: "About ResumeIQ",
+              message: "ResumeIQ is an AI-powered resume screening, skill extraction, and candidate matching platform designed to connect job seekers with top recruiters."
+            })
+          }
+        >
           <FaInfoCircle /> About Us
         </button>
       </nav>
@@ -206,6 +217,14 @@ export default function Home() {
       <footer className="landing-footer">
         <FaCheck style={{ color: "#16A34A" }} /> Trusted by recruiters and job seekers worldwide
       </footer>
+
+      <StatusModal
+        isOpen={statusModal.isOpen}
+        type={statusModal.type}
+        title={statusModal.title}
+        message={statusModal.message}
+        onClose={() => setStatusModal({ ...statusModal, isOpen: false })}
+      />
     </div>
   );
 }

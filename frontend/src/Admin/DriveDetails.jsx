@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { authApi } from "../api/apiService";
 import { BASE_SERVER_URL } from "../api/axiosInstance";
 import AdminNavbar from "../components/AdminNavbar";
+import StatusModal from "../components/StatusModal";
 import "./DriveDetails.css";
 import {
   FaFileAlt,
@@ -57,6 +58,13 @@ export default function DriveDetails() {
   // Candidate Details Modal State
   const [selectedCandidateApp, setSelectedCandidateApp] = useState(null);
 
+  const [statusModal, setStatusModal] = useState({
+    isOpen: false,
+    type: "info",
+    title: "",
+    message: ""
+  });
+
   // Fetch Drive & Applications Data
   const fetchData = async () => {
     setLoading(true);
@@ -98,14 +106,24 @@ export default function DriveDetails() {
       setDrive(updatedData);
     } catch (err) {
       console.error("Error updating drive status:", err);
-      alert("Failed to update status.");
+      setStatusModal({
+        isOpen: true,
+        type: "error",
+        title: "Status Update Failed",
+        message: "Unable to update drive status at this time."
+      });
     }
   };
 
   // Export Candidates List to CSV / Excel format
   const handleExportExcel = () => {
     if (applications.length === 0) {
-      alert("No candidate data available to export.");
+      setStatusModal({
+        isOpen: true,
+        type: "info",
+        title: "No Data",
+        message: "No candidate data is available to export for this hiring drive."
+      });
       return;
     }
 
@@ -614,6 +632,14 @@ export default function DriveDetails() {
           </div>
         </div>
       )}
+
+      <StatusModal
+        isOpen={statusModal.isOpen}
+        type={statusModal.type}
+        title={statusModal.title}
+        message={statusModal.message}
+        onClose={() => setStatusModal({ ...statusModal, isOpen: false })}
+      />
     </div>
   );
 }

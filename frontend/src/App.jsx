@@ -5,6 +5,7 @@ import LoginUser from "./pages/LoginUser";
 import LoginAdmin from "./pages/LoginAdmin";
 import RegisterUser from "./User/RegisterUser";
 import RegisterAdmin from "./Admin/RegisterAdmin";
+import NotFound from "./pages/NotFound";
 
 import UserHomePage from "./User/UserHomePage";
 import UserDriveDetails from "./User/UserDriveDetails";
@@ -34,6 +35,9 @@ export default function App() {
         <Route path="/admin-home" element={<AdminHome />} />
         <Route path="/create-drive" element={<CreateDrive />} />
         <Route path="/admin/drives/:driveId" element={<DriveDetails />} />
+
+        {/* 404 Catch-All Route */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );

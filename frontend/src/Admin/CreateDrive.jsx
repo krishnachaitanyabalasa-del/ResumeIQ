@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../api/apiService";
 import AdminNavbar from "../components/AdminNavbar";
+import StatusModal from "../components/StatusModal";
 import "./CreateDrive.css";
 import {
   FaArrowLeft,
@@ -17,6 +18,13 @@ import {
 
 export default function CreateDrive() {
   const navigate = useNavigate();
+
+  const [statusModal, setStatusModal] = useState({
+    isOpen: false,
+    type: "success",
+    title: "",
+    message: ""
+  });
 
   // Form State
   const [form, setForm] = useState({
@@ -120,15 +128,24 @@ export default function CreateDrive() {
 
       await authApi.createDrive(formData);
 
-      alert("Hiring Drive created successfully!");
-      navigate("/admin-home");
+      setStatusModal({
+        isOpen: true,
+        type: "success",
+        title: "Drive Created Successfully!",
+        message: "Hiring drive details and Job Description criteria have been saved."
+      });
     } catch (err) {
       console.error("Create Drive Error:", err);
       let msg = "Failed to create drive. Check backend server connection.";
       if (err.response && err.response.data && err.response.data.error) {
         msg = err.response.data.error;
       }
-      setErrorMessage(msg);
+      setStatusModal({
+        isOpen: true,
+        type: "error",
+        title: "Creation Failed",
+        message: msg
+      });
     } finally {
       setSubmitting(false);
     }
@@ -389,6 +406,19 @@ export default function CreateDrive() {
           </div>
         </form>
       </main>
+
+      <StatusModal
+        isOpen={statusModal.isOpen}
+        type={statusModal.type}
+        title={statusModal.title}
+        message={statusModal.message}
+        onClose={() => {
+          setStatusModal({ ...statusModal, isOpen: false });
+          if (statusModal.type === "success") {
+            navigate("/admin-home");
+          }
+        }}
+      />
     </div>
   );
 }
