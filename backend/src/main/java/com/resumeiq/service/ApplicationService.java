@@ -228,7 +228,7 @@ public class ApplicationService {
         if (text == null || text.isBlank()) return new ArrayList<>();
         return Arrays.stream(text.split("[,;\n]+"))
                 .map(String::trim)
-                .filter(s -> !s.isEmpty() && s.length() >= 2)
+                .filter(s -> !s.isEmpty() && s.length() >= 1)
                 .distinct()
                 .collect(Collectors.toList());
     }
