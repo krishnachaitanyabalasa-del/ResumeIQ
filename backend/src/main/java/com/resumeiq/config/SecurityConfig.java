@@ -55,9 +55,7 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.POST, "/api/admin").permitAll()
 
-                        // ==========================================
-                        // 2. APPLICANT & SHARED ENDPOINTS
-                        // ==========================================
+
                         .requestMatchers(
                                 "/api/resumes/**",
                                 "/api/applications",
@@ -67,9 +65,6 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "/api/drives", "/api/drives/**").hasAnyAuthority("APPLICANT", "ADMIN")
 
-                        // ==========================================
-                        // 3. ADMIN-ONLY ENDPOINTS
-                        // ==========================================
                         .requestMatchers(
                                 "/api/admin/**",
                                 "/api/users/**",

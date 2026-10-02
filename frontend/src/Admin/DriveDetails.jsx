@@ -115,9 +115,22 @@ export default function DriveDetails() {
     }
   };
 
-  // Export Candidates List to CSV / Excel format
+  // Helper to escape values according to CSV RFC 4180 rules for Excel
+  const escapeCsvCell = (value) => {
+    if (value === null || value === undefined) return '""';
+    // Replace newlines with space to maintain row alignment in Excel
+    let str = String(value).replace(/[\r\n]+/g, " ").trim();
+    // Escape internal double quotes by doubling them
+    str = str.replace(/"/g, '""');
+    return `"${str}"`;
+  };
+
+  // Export Candidates List to Excel-compatible CSV format
   const handleExportExcel = () => {
-    if (applications.length === 0) {
+    // If search filter is active and has matches, export filtered set; otherwise export all applications
+    const listToExport = filteredApps.length > 0 ? filteredApps : applications;
+
+    if (listToExport.length === 0) {
       setStatusModal({
         isOpen: true,
         type: "info",
@@ -127,26 +140,70 @@ export default function DriveDetails() {
       return;
     }
 
-    const headers = ["#", "Candidate Name", "Email", "Phone", "Experience", "Resume Score", "Applied On"];
-    const rows = applications.map((app, index) => {
+    const headers = [
+      "#",
+      "Candidate Name",
+      "Email",
+      "Phone",
+      "Overall Score (%)",
+      "Skills Score (%)",
+      "Experience Score (%)",
+      "Education Score (%)",
+      "Experience",
+      "Education",
+      "Matched Skills",
+      "Missing Skills",
+      "Applied On",
+      "Status"
+    ];
+
+    const rows = listToExport.map((app, index) => {
       const name = app.resume?.name || app.applicant?.name || "Candidate";
       const email = app.resume?.email || app.applicant?.email || "N/A";
-      const phone = app.resume?.phone || app.applicant?.phone || "N/A";
-      const exp = app.resume?.experience || app.applicant?.experience || drive?.experience || "N/A";
+      const phone = app.resume?.phone || app.applicant?.phone || app.phone || "N/A";
       const score = Math.round(app.score || 0);
+      const skillsScore = Math.round(app.skillsScore || 0);
+      const expScore = Math.round(app.experienceScore || 0);
+      const eduScore = Math.round(app.educationScore || 0);
+      const exp = app.resume?.experience || app.applicant?.experience || drive?.experience || "N/A";
+      const edu = app.resume?.education || "N/A";
+      const matched = app.matchedSkills || "N/A";
+      const missing = app.missingSkills || "N/A";
       const appliedDate = app.appliedAt ? new Date(app.appliedAt).toLocaleString() : "N/A";
+      const status = app.status || "APPLIED";
 
-      return [index + 1, `"${name}"`, `"${email}"`, `"${phone}"`, `"${exp}"`, score, `"${appliedDate}"`].join(",");
+      return [
+        index + 1,
+        escapeCsvCell(name),
+        escapeCsvCell(email),
+        escapeCsvCell(phone),
+        score,
+        skillsScore,
+        expScore,
+        eduScore,
+        escapeCsvCell(exp),
+        escapeCsvCell(edu),
+        escapeCsvCell(matched),
+        escapeCsvCell(missing),
+        escapeCsvCell(appliedDate),
+        escapeCsvCell(status)
+      ].join(",");
     });
 
-    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows].join("\n");
-    const encodedUri = encodeURI(csvContent);
+    const csvContent = [headers.join(","), ...rows].join("\r\n");
+
+    // Prepend UTF-8 BOM (\uFEFF) so Excel opens UTF-8 encoded text correctly
+    const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const safeDriveName = (drive?.driveName || `Drive_${driveId}`).replace(/[^a-zA-Z0-9_-]/g, "_");
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Applied_Candidates_Drive_${driveId}.csv`);
+    link.href = url;
+    link.setAttribute("download", `${safeDriveName}_Candidates_Export.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   // Filter applications by search query
